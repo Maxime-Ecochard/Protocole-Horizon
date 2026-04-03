@@ -5,6 +5,58 @@
 
 const STATE_KEY = 'protocole_horizon_state';
 
+// --- IMMERSION ENGINE (Audio & Haptics) ---
+const AudioEngine = {
+    ctx: null,
+    init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    },
+    play(type) {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        const now = this.ctx.currentTime;
+        if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+        } else if (type === 'success') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+            osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        }
+    }
+};
+
+function triggerHaptic(type) {
+    if ("vibrate" in navigator) {
+        if (type === 'light') navigator.vibrate(20);
+        if (type === 'medium') navigator.vibrate(50);
+        if (type === 'error') navigator.vibrate([50, 50, 50]);
+        if (type === 'success') navigator.vibrate([100, 50, 100]);
+    }
+}
+
 // --- INITIAL STATE ---
 let state = {
     group: null,
@@ -49,7 +101,6 @@ function loadState() {
 }
 
 function getPuzzleId(group, step) {
-    if (state.isDemoMode) return step + 1; // In demo mode, step corresponds to puzzle ID
     // Carousel formula: Énigme_Affichée = ((Numéro_Groupe - 1 + Étape_Actuelle) % 9) + 1
     return ((group - 1 + step) % 9) + 1;
 }
@@ -106,6 +157,8 @@ function renderHome(container) {
     });
 
     startBtn.addEventListener('click', () => {
+        AudioEngine.play('click');
+        triggerHaptic('medium');
         state.group = parseInt(select.value);
         state.startTime = Date.now();
         saveState();
@@ -171,15 +224,19 @@ function renderPuzzle(container) {
 
     nextBtn.addEventListener('click', () => {
         const val = responseInput.value;
-        if (puzzle.validation(val)) {
-            state.responses[puzzleId] = val;
+        if (puzzle.validation(val) || state.isDemoMode) {
+            AudioEngine.play('success');
+            triggerHaptic('success');
+            state.responses[puzzleId] = val || (state.isDemoMode ? "DEMO" : "");
             state.notes[puzzleId] = notesInput.value;
             state.currentStep++;
             clearInterval(chronoInterval);
             saveState();
-            syncWithBackend(state.group, puzzleId, val, state.notes[puzzleId]);
+            syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId]);
             render();
         } else {
+            AudioEngine.play('error');
+            triggerHaptic('error');
             alert("Réponse non valide. Vérifie tes mesures !");
         }
     });
@@ -279,20 +336,37 @@ function renderAdmin(container) {
 
     container.appendChild(view);
 
-    // Mock progress visualization (would be GS Sheets in real use)
+    // Visualization of progress & responses (mocking multi-group backend)
+    const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
+    const latestData = {}; // key: "group-puzzleId", value: response
+    logs.forEach(log => {
+        const gNum = parseInt(log.group.replace("Groupe ", ""));
+        const pId = parseInt(log.enigme.replace("E", ""));
+        latestData[`${gNum}-${pId}`] = log.valeur;
+    });
+
+    // Merge current session data (if not yet synced)
     if (state.group) {
-        for(let s=0; s < state.currentStep; s++) {
-            const pid = getPuzzleId(state.group, s);
-            const cell = view.querySelector(`#cell-${state.group}-${pid}`);
-            if (cell) {
-                cell.className = 'status-2';
-                cell.innerText = 'OK';
-            }
+        for (const [pId, val] of Object.entries(state.responses)) {
+            latestData[`${state.group}-${pId}`] = val;
         }
-        if (state.currentStep < 9) {
-            const pid = getPuzzleId(state.group, state.currentStep);
-            const cell = view.querySelector(`#cell-${state.group}-${pid}`);
-            if (cell) {
+    }
+
+    // Populate the table cells
+    for(let g=1; g<=9; g++) {
+        for(let pId=1; pId<=9; pId++) {
+            const cell = view.querySelector(`#cell-${g}-${pId}`);
+            if (!cell) continue;
+
+            const val = latestData[`${g}-${pId}`];
+            if (val) {
+                const puzzle = PUZZLES.find(p => p.id === pId);
+                const isCorrect = puzzle.validation(val);
+                cell.className = isCorrect ? 'status-correct' : 'status-incorrect';
+                cell.innerText = val;
+                cell.title = `Réponse: ${val}`; // Tooltip
+            } else if (state.group === g && pId === getPuzzleId(state.group, state.currentStep)) {
+                // Focus on current step for the active group
                 cell.className = 'status-1';
                 cell.innerText = '...';
             }
@@ -435,6 +509,8 @@ function loadTool(type, container, puzzleId) {
             let taps = [];
             
             tapBtn.addEventListener('click', () => {
+                AudioEngine.play('click');
+                triggerHaptic('light');
                 const now = Date.now();
                 taps.push(now);
                 if (taps.length > 1) {
