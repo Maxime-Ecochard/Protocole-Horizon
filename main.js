@@ -77,7 +77,7 @@ const PUZZLES = [
     { id: 5, title: "PC - Spectre de la lumière", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Observe le spectre du soleil. Quelle couleur est la plus déviée ?", question: "Chiffre de la couleur = E", validation: (val) => val >= 0 },
     { id: 6, title: "SVT - Érosion et Géologie", discipline: "SVT", tool: "input", instruction: "Trouve l'inclusion minérale. Sédimentaire(1), Magmatique(2), Métamorphique(3).", question: "Chiffre associé = F", validation: (val) => [1, 2, 3].includes(parseInt(val)) },
     { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins.", question: "Numéro du tube témoin = G", validation: (val) => val > 0 },
-    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio_choice", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
+    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
     { id: 9, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités en <strong>°C</strong> = I", validation: (val) => val >= 0 }
 ];
 
@@ -199,6 +199,19 @@ function renderPuzzle(container) {
             <textarea id="puzzle-notes" placeholder="Tes observations...">${state.notes[puzzleId] || ''}</textarea>
         </div>
 
+        ${puzzle.id === 8 ? `
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0 2rem 0;">
+                <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); padding: 1rem; border-radius: 12px;">
+                    <h4 style="color: var(--accent-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">CAS N°1</h4>
+                    <p style="font-size: 0.85rem;">Le son produit par le diapason A est grave et vibre lentement.</p>
+                </div>
+                <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); padding: 1rem; border-radius: 12px;">
+                    <h4 style="color: var(--accent-secondary); font-size: 0.9rem; margin-bottom: 0.2rem;">CAS N°2</h4>
+                    <p style="font-size: 0.85rem;">Le son produit par le diapason B est aigu et vibre rapidement.</p>
+                </div>
+            </div>
+        ` : ''}
+
         <div class="input-group">
             <label>${puzzle.question}</label>
             <input type="number" id="puzzle-response" placeholder="Ta réponse..." value="${state.responses[puzzleId] || ''}">
@@ -297,13 +310,17 @@ function renderFinal(container) {
 }
 
 function renderAdmin(container) {
-    const view = document.createElement('div');
-    view.className = 'view-container';
-    view.innerHTML = `
+    const app = document.getElementById('app');
+    app.classList.add('admin-mode');
+    
+    container.innerHTML = `
         <div class="admin-header">
-            <h2>Tableau de Bord Enseignant</h2>
+            <div>
+                <h2 style="background: linear-gradient(90deg, #fff, var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">CONSOLE ENSEIGNANT</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Suivi des missions en temps réel</p>
+            </div>
             <div class="switch-container">
-                <span>Mode Démo</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">MODE DÉMO</span>
                 <label class="switch">
                     <input type="checkbox" id="demo-switch" ${state.isDemoMode ? 'checked' : ''}>
                     <span class="slider"></span>
@@ -311,18 +328,18 @@ function renderAdmin(container) {
             </div>
         </div>
         
-        <div class="card admin-container">
+        <div class="card" style="padding: 0.5rem; background: rgba(15, 23, 42, 0.2); border: 1px solid rgba(255,255,255,0.05);">
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>GRP</th>
+                        <th style="width: 40px;">GRP</th>
                         ${[1,2,3,4,5,6,7,8,9].map(i => `<th>E${i}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody id="admin-tbody">
                     ${[1,2,3,4,5,6,7,8,9].map(g => `
                         <tr>
-                            <td><strong>${g}</strong></td>
+                            <td style="background: rgba(30, 41, 59, 1); color: #fff; font-weight: 900; border-radius: 6px;">${g}</td>
                             ${[1,2,3,4,5,6,7,8,9].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
                         </tr>
                     `).join('')}
@@ -330,11 +347,13 @@ function renderAdmin(container) {
             </table>
         </div>
         
-        <button id="exit-admin" class="secondary">RETOURNER À L'APPLI</button>
-        <button id="full-reset" style="margin-top: 1rem; background: #f8d7da; color: #721c24;">RESET TOTAL</button>
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button id="exit-admin" class="secondary" style="flex: 1;">RETOURNER À L'APPLI</button>
+            <button id="full-reset" style="flex: 1; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error); color: var(--error);">RÉINITIALISER TOUT</button>
+        </div>
     `;
 
-    container.appendChild(view);
+    // Visualization logic
 
     // Visualization of progress & responses (mocking multi-group backend)
     const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
@@ -359,16 +378,19 @@ function renderAdmin(container) {
             if (!cell) continue;
 
             const val = latestData[`${g}-${pId}`];
+            const logsForThis = logs.find(l => parseInt(l.group.replace("Groupe ", "")) === g && parseInt(l.enigme.replace("E", "")) === pId);
+            const notes = logsForThis ? (logsForThis.notes || "Pas de notes") : "";
+
             if (val) {
                 const puzzle = PUZZLES.find(p => p.id === pId);
                 const isCorrect = puzzle.validation(val);
                 cell.className = isCorrect ? 'status-correct' : 'status-incorrect';
-                cell.innerText = val;
-                cell.title = `Réponse: ${val}`; // Tooltip
+                cell.innerText = isCorrect ? "✔️ " + val : "❌ " + val;
+                cell.title = `Réponse: ${val}\nNotes: ${notes}`; 
             } else if (state.group === g && pId === getPuzzleId(state.group, state.currentStep)) {
-                // Focus on current step for the active group
                 cell.className = 'status-1';
-                cell.innerText = '...';
+                cell.innerText = '⏳';
+                cell.title = 'Mission en cours...';
             }
         }
     }
@@ -376,11 +398,12 @@ function renderAdmin(container) {
     view.querySelector('#demo-switch').addEventListener('change', (e) => {
         state.isDemoMode = e.target.checked;
         saveState();
-        alert(`Mode Démo ${state.isDemoMode ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`);
+        triggerHaptic('medium');
     });
 
     view.querySelector('#exit-admin').addEventListener('click', () => {
         state.isAdmin = false;
+        app.classList.remove('admin-mode');
         const url = new URL(window.location);
         url.searchParams.delete('admin');
         window.history.replaceState({}, '', url);
@@ -622,60 +645,57 @@ function loadTool(type, container, puzzleId) {
             });
             break;
 
-        case 'audio_choice':
+        case 'audio':
             container.innerHTML = `
-                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
-                    <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary);">
-                        <h4 style="color: var(--accent-secondary); margin-bottom: 0.5rem;">CAS N°1</h4>
-                        <p style="font-size: 0.9rem;">Le son produit par le diapason A est grave et vibre lentement.</p>
+                <div style="width: 100%; text-align: center;">
+                    <canvas id="audio-fft" style="width: 100%; height: 100px; background: rgba(15, 23, 42, 0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                    <p id="freq-val" style="margin: 1rem 0; font-weight: 900; font-size: 1.5rem; color: var(--accent-primary);">-- Hz</p>
+                    <button id="start-audio" class="secondary" style="font-size: 0.9rem; width: auto; margin: 0 auto;">DÉMARRER LE MICRO</button>
+                    <div style="margin-top: 1rem; padding: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                       <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.5rem;">Trop complexe ?</p>
+                       <a href="phyphox://" style="color: var(--accent-secondary); font-size: 0.8rem; font-weight: 700; text-decoration: none;">Ouvrir l'application Phyphox</a>
                     </div>
-                    <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary);">
-                        <h4 style="color: var(--accent-secondary); margin-bottom: 0.5rem;">CAS N°2</h4>
-                        <p style="font-size: 0.9rem;">Le son produit par le diapason B est aigu et vibre rapidement.</p>
-                    </div>
-                    <p style="font-size: 0.8rem; font-style: italic; text-align: center; color: var(--text-muted); margin-top: 1rem;">Lequel correspond à la mesure de fréquence la plus haute ?</p>
                 </div>
             `;
-            break;
             const audioCanvas = container.querySelector('#audio-fft');
-            const freqVal = container.querySelector('#freq-val');
-            const startAudio = container.querySelector('#start-audio');
-            let audioCtx, analyzer, dataArray;
+            const freqValText = container.querySelector('#freq-val');
+            const startBtnAudio = container.querySelector('#start-audio');
+            let analyzer, dataAr, aCtx;
 
-            startAudio.onclick = async () => {
+            startBtnAudio.onclick = async () => {
                 try {
                     const aStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const source = audioCtx.createMediaStreamSource(aStream);
-                    analyzer = audioCtx.createAnalyser();
+                    aCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = aCtx.createMediaStreamSource(aStream);
+                    analyzer = aCtx.createAnalyser();
                     analyzer.fftSize = 2048;
                     source.connect(analyzer);
-                    dataArray = new Uint8Array(analyzer.frequencyBinCount);
-                    startAudio.style.display = 'none';
-                    drawAudio();
+                    dataAr = new Uint8Array(analyzer.frequencyBinCount);
+                    startBtnAudio.style.display = 'none';
+                    drawAudioSpectrum();
                 } catch(e) { alert("Micro non supporté."); }
             };
 
-            function drawAudio() {
+            function drawAudioSpectrum() {
                 if(!analyzer) return;
-                requestAnimationFrame(drawAudio);
-                analyzer.getByteFrequencyData(dataArray);
-                const ctx = audioCanvas.getContext('2d');
-                ctx.fillStyle = '#1a202c';
-                ctx.fillRect(0, 0, audioCanvas.width, audioCanvas.height);
+                requestAnimationFrame(drawAudioSpectrum);
+                analyzer.getByteFrequencyData(dataAr);
+                const ctxAudio = audioCanvas.getContext('2d');
+                ctxAudio.fillStyle = 'rgba(15, 23, 42, 1)';
+                ctxAudio.fillRect(0, 0, audioCanvas.width, audioCanvas.height);
                 
-                let maxVal = 0, maxIdx = 0;
-                const barWidth = (audioCanvas.width / dataArray.length) * 2.5;
-                let x = 0;
-                for(let i = 0; i < dataArray.length; i++) {
-                    const barHeight = dataArray[i] / 2;
-                    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-                    ctx.fillRect(x, audioCanvas.height - barHeight, barWidth, barHeight);
-                    x += barWidth + 1;
-                    if(dataArray[i] > maxVal) { maxVal = dataArray[i]; maxIdx = i; }
+                let mVal = 0, mIdx = 0;
+                const bW = (audioCanvas.width / dataAr.length) * 2.5;
+                let curX = 0;
+                for(let i = 0; i < dataAr.length; i++) {
+                    const bH = dataAr[i] / 2;
+                    ctxAudio.fillStyle = `rgb(59, 130, 246)`;
+                    ctxAudio.fillRect(curX, audioCanvas.height - bH, bW, bH);
+                    curX += bW + 1;
+                    if(dataAr[i] > mVal) { mVal = dataAr[i]; mIdx = i; }
                 }
-                const freq = maxIdx * audioCtx.sampleRate / analyzer.fftSize;
-                if(maxVal > 50) freqVal.innerText = `${Math.round(freq)} Hz`;
+                const freqActual = mIdx * aCtx.sampleRate / analyzer.fftSize;
+                if(mVal > 50) freqValText.innerText = `${Math.round(freqActual)} Hz`;
             }
             break;
 
