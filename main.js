@@ -71,14 +71,14 @@ let state = {
 // --- DATA: The 9 Puzzles ---
 const PUZZLES = [
     { id: 1, title: "SVT - La biodiversité locale", discipline: "SVT", tool: "camera", instruction: "Identifie l'arbre marqué. Compte le nombre de lobes sur une feuille.", question: "Nombre de lobes = A", validation: (val) => val > 0 },
-    { id: 2, title: "PC - Propagation de la lumière", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Mesure l'ombre du poteau. Divise la longueur par 2.", question: "Résultat arrondi = B", validation: (val) => val > 0 },
-    { id: 3, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "input", instruction: "Mesure la masse de 125 mL d'eau.", question: "Chiffre des dizaines = C", validation: (val) => val >= 0 },
-    { id: 4, title: "SVT - Effort physique", discipline: "SVT", tool: "bpm", instruction: "Cours 100m. Prends ton pouls sur 15s.", question: "Premier chiffre du BPM = D", validation: (val) => val >= 0 },
+    { id: 2, title: "PC - Propagation de la lumière", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Mesure l'ombre du poteau. Divise la longueur par 2.", question: "Taille du panier en <strong>m</strong> = B", validation: (val) => val > 0 },
+    { id: 3, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Mesure la masse de 125 mL d'eau.", question: "Chiffre des dizaines en <strong>g</strong> = C", validation: (val) => val >= 0 },
+    { id: 4, title: "SVT - Effort physique", discipline: "SVT", tool: "bpm", instruction: "Cours 100m. Prends ton pouls sur 15s.", question: "Premier chiffre du BPM en <strong>bpm</strong> = D", validation: (val) => val >= 0 },
     { id: 5, title: "PC - Spectre de la lumière", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Observe le spectre du soleil. Quelle couleur est la plus déviée ?", question: "Chiffre de la couleur = E", validation: (val) => val >= 0 },
     { id: 6, title: "SVT - Érosion et Géologie", discipline: "SVT", tool: "input", instruction: "Trouve l'inclusion minérale. Sédimentaire(1), Magmatique(2), Métamorphique(3).", question: "Chiffre associé = F", validation: (val) => [1, 2, 3].includes(parseInt(val)) },
-    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "input", instruction: "Compare le tube Inconnu X avec les témoins.", question: "Numéro du tube témoin = G", validation: (val) => val > 0 },
-    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ? A(4) ou B(8).", question: "Chiffre choisi = H", validation: (val) => [4, 8].includes(parseInt(val)) },
-    { id: 9, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités = I", validation: (val) => val >= 0 }
+    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins.", question: "Numéro du tube témoin = G", validation: (val) => val > 0 },
+    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio_choice", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
+    { id: 9, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités en <strong>°C</strong> = I", validation: (val) => val >= 0 }
 ];
 
 // --- CORE UTILS ---
@@ -420,15 +420,26 @@ function loadTool(type, container, puzzleId) {
 
             container.querySelector('#open-cam').addEventListener('click', async () => {
                 const btn = container.querySelector('#open-cam');
-                if (btn.innerText === "📸 Capture") {
+                if (!stream) {
                     try {
-                        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                        stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: { facingMode: { exact: 'environment' } || 'environment' } 
+                        });
                         video.style.display = 'block';
                         canvas.style.display = 'none';
                         video.srcObject = stream;
                         btn.innerText = "Saisir l'image";
                     } catch (e) {
-                        alert("Erreur accès caméra !");
+                        // Fallback if environment camera is not available
+                        try {
+                            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                            video.style.display = 'block';
+                            canvas.style.display = 'none';
+                            video.srcObject = stream;
+                            btn.innerText = "Saisir l'image";
+                        } catch (e2) {
+                            alert("Erreur accès caméra. Vérifie les permissions !");
+                        }
                     }
                 } else {
                     canvas.width = video.videoWidth;
@@ -438,6 +449,7 @@ function loadTool(type, container, puzzleId) {
                     canvas.style.display = 'block';
                     btn.innerText = "📸 Capture";
                     if(stream) stream.getTracks().forEach(t => t.stop());
+                    stream = null;
                 }
             });
 
@@ -471,25 +483,78 @@ function loadTool(type, container, puzzleId) {
             });
             break;
 
-        case 'crossMath':
+        case 'density':
             container.innerHTML = `
-                <div style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%;">
-                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;">
-                        <input type="number" id="m1" placeholder="3m" style="padding: 0.5rem; text-align: center;">
-                        <span>&nbsp;➡&nbsp;</span>
-                        <input type="number" id="m2" placeholder="Ombre (m)" style="padding: 0.5rem; text-align: center;">
-                        <input type="number" value="1" readonly style="padding: 0.5rem; text-align: center; background: #f8fafc;">
-                        <span>&nbsp;➡&nbsp;</span>
-                        <input type="number" id="m-res" readonly placeholder="?" style="padding: 0.5rem; text-align: center; font-weight: 900; background: #e8f8f5;">
+                <div style="width: 100%; display: flex; justify-content: space-around; align-items: flex-end; height: 200px; padding-bottom: 2rem;">
+                    <!-- Balance -->
+                    <div style="text-align: center;">
+                        <div style="width: 100px; height: 20px; background: #475569; border-radius: 4px; margin: 0 auto;"></div>
+                        <div style="width: 120px; height: 40px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--success); font-family: monospace; font-size: 1.2rem; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+                            <span id="scale-val">0.0</span><small style="font-size: 0.6rem; margin-left: 2px;">g</small>
+                        </div>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">BALANCE</p>
                     </div>
-                    <p style="font-size: 0.8rem; margin-top: 1rem; color: #64748b;">Produit en croix automatique sur 1m</p>
+                    <!-- Éprouvette -->
+                    <div style="text-align: center; position: relative;">
+                        <div style="width: 50px; height: 150px; border: 3px solid rgba(255,255,255,0.3); border-top: none; border-radius: 0 0 10px 10px; position: relative; overflow: hidden; background: rgba(255,255,255,0.05);">
+                            <div id="water-level" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: rgba(59, 130, 246, 0.4); transition: height 0.5s ease-out;">
+                                <div style="position: absolute; top:0; width: 100%; height: 2px; background: rgba(255,255,255,0.5);"></div>
+                            </div>
+                            <!-- graduations -->
+                            ${[140, 120, 100, 80, 60, 40, 20].map(v => `<div style="position: absolute; bottom: ${v}px; right: 0; width: 10px; height: 1px; background: rgba(255,255,255,0.3);"></div>`).join('')}
+                        </div>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">ÉPROUVETTE (mL)</p>
+                    </div>
+                </div>
+                <button id="btn-measure" class="secondary" style="font-size: 0.9rem; width: auto; margin: 0 auto; display: block;">POSER L'EAU (125mL)</button>
+            `;
+            const scale = container.querySelector('#scale-val');
+            const water = container.querySelector('#water-level');
+            const bMeas = container.querySelector('#btn-measure');
+            bMeas.onclick = () => {
+                AudioEngine.play('click');
+                scale.innerText = "125.0";
+                water.style.height = "85%"; // 125mL approx
+                bMeas.disabled = true;
+                bMeas.innerText = "MESURE EFFECTUÉE";
+            };
+            break;
+            container.innerHTML = `
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group" style="margin:0">
+                            <label>Taille Élevé (m)</label>
+                            <input type="number" id="h-eleve" placeholder="ex: 1.65" step="0.01">
+                        </div>
+                        <div class="input-group" style="margin:0">
+                            <label>Ombre Élevé (m)</label>
+                            <input type="number" id="o-eleve" placeholder="ex: 2.10" step="0.01">
+                        </div>
+                        <div class="input-group" style="margin:0">
+                            <label>Ombre Panier (m)</label>
+                            <input type="number" id="o-panier" placeholder="ex: 4.50" step="0.01">
+                        </div>
+                        <div class="input-group" style="margin:0">
+                            <label>Taille Panier (m)</label>
+                            <div id="h-panier-res" style="padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 12px; color: var(--success); font-weight: 800; text-align: center; font-size: 1.2rem;">-- m</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Thalès : (Taille Élevé × Ombre Panier) / Ombre Élevé</p>
                 </div>
             `;
-            const m1 = container.querySelector('#m1');
-            const m2 = container.querySelector('#m2');
-            const mr = container.querySelector('#m-res');
-            const calc = () => { if(m1.value && m2.value) mr.value = (parseFloat(m2.value) / parseFloat(m1.value)).toFixed(2); };
-            m1.oninput = calc; m2.oninput = calc;
+            const hE = container.querySelector('#h-eleve');
+            const oE = container.querySelector('#o-eleve');
+            const oP = container.querySelector('#o-panier');
+            const resH = container.querySelector('#h-panier-res');
+            const updateCalc = () => {
+                if (hE.value && oE.value && oP.value) {
+                    const result = (parseFloat(hE.value) * parseFloat(oP.value)) / parseFloat(oE.value);
+                    resH.innerText = result.toFixed(2) + " m";
+                } else {
+                    resH.innerText = "-- m";
+                }
+            };
+            hE.oninput = updateCalc; oE.oninput = updateCalc; oP.oninput = updateCalc;
             break;
 
         case 'bpm':
@@ -540,8 +605,8 @@ function loadTool(type, container, puzzleId) {
             const box = container.querySelector('#spectrum-box');
             const picker = container.querySelector('#spectrum-picker');
             const res = container.querySelector('#spectro-result');
-            const colors = ["Violet (7)", "Bleu (6)", "Vert (5)", "Jaune (?), non utilisé", "Orange (?)", "Rouge (?)"];
-            const values = [7, 6, 5, 4, 3, 2];
+            const colors = ["Violet", "Bleu", "Vert", "Jaune", "Orange", "Rouge"];
+            const values = [1, 2, 3, 4, 5, 6];
 
             box.addEventListener('click', (e) => {
                 const rect = box.getBoundingClientRect();
@@ -552,23 +617,26 @@ function loadTool(type, container, puzzleId) {
                 
                 let idx = Math.floor(percent * 6);
                 idx = Math.max(0, Math.min(5, idx));
-                res.innerText = `Couleur : ${colors[idx]}`;
-                res.style.color = '#1a202c';
+                res.innerText = `${colors[idx]} (Valeur: ${values[idx]})`;
+                res.style.color = '#fff';
             });
             break;
 
-        case 'audio':
+        case 'audio_choice':
             container.innerHTML = `
-                <div style="width: 100%; text-align: center;">
-                    <canvas id="audio-fft" style="width: 100%; height: 100px; background: #1a202c; border-radius: 8px;"></canvas>
-                    <p id="freq-val" style="margin: 1rem 0; font-weight: 900; font-size: 1.2rem;">-- Hz</p>
-                    <button id="start-audio" class="secondary" style="font-size: 0.9rem;">DÉMARRER LE MICRO</button>
-                    <div style="margin-top: 1rem; padding: 0.5rem; border-top: 1px solid #e2e8f0;">
-                       <p style="font-size: 0.7rem; color: #64748b; margin-bottom: 0.5rem;">Trop complexe ?</p>
-                       <a href="phyphox://" style="color: var(--accent-secondary); font-size: 0.8rem; font-weight: 700; text-decoration: none;">Ouvrir l'application Phyphox</a>
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary);">
+                        <h4 style="color: var(--accent-secondary); margin-bottom: 0.5rem;">CAS N°1</h4>
+                        <p style="font-size: 0.9rem;">Le son produit par le diapason A est grave et vibre lentement.</p>
                     </div>
+                    <div class="card" style="margin: 0; background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary);">
+                        <h4 style="color: var(--accent-secondary); margin-bottom: 0.5rem;">CAS N°2</h4>
+                        <p style="font-size: 0.9rem;">Le son produit par le diapason B est aigu et vibre rapidement.</p>
+                    </div>
+                    <p style="font-size: 0.8rem; font-style: italic; text-align: center; color: var(--text-muted); margin-top: 1rem;">Lequel correspond à la mesure de fréquence la plus haute ?</p>
                 </div>
             `;
+            break;
             const audioCanvas = container.querySelector('#audio-fft');
             const freqVal = container.querySelector('#freq-val');
             const startAudio = container.querySelector('#start-audio');
@@ -609,6 +677,60 @@ function loadTool(type, container, puzzleId) {
                 const freq = maxIdx * audioCtx.sampleRate / analyzer.fftSize;
                 if(maxVal > 50) freqVal.innerText = `${Math.round(freq)} Hz`;
             }
+            break;
+
+        case 'concentration':
+            container.innerHTML = `
+                <div style="width: 100%; text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        ${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                <div style="width: 25px; height: 80px; border: 2px solid rgba(255,255,255,0.2); border-radius: 0 0 12px 12px; position: relative;">
+                                    <div style="position: absolute; bottom: 0; width: 100%; height: ${10 + i * 11}%; background: rgba(59, 130, 246, ${0.1 + (i / 8) * 0.9}); border-radius: 0 0 10px 10px;"></div>
+                                </div>
+                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent-secondary);">${i}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div id="drag-container" style="width: 100%; height: 120px; position: relative; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Glisse le TUBE X pour comparer :</p>
+                         <div id="tube-x" style="width: 35px; height: 90px; border: 3px solid var(--accent-primary); border-radius: 0 0 15px 15px; background: rgba(15, 23, 42, 0.8); position: absolute; left: 10px; cursor: grab; transition: transform 0.1s; z-index: 10;">
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 65%; background: rgba(59, 130, 246, 0.6); border-radius: 0 0 12px 12px;"></div>
+                            <span style="position: absolute; top: -20px; width: 100%; text-align: center; color: var(--accent-primary); font-weight: 900; font-size: 0.8rem;">X</span>
+                         </div>
+                    </div>
+                </div>
+            `;
+            const tx = container.querySelector('#tube-x');
+            const dc = container.querySelector('#drag-container');
+            let isDraggingX = false;
+            let startX = 0;
+            let currentX = 0;
+
+            const onDragStart = (e) => {
+                isDraggingX = true;
+                startX = (e.clientX || e.touches[0].clientX) - currentX;
+                tx.style.cursor = 'grabbing';
+            };
+            const onDragMove = (e) => {
+                if (!isDraggingX) return;
+                const clientX = e.clientX || e.touches[0].clientX;
+                currentX = clientX - startX;
+                // Constraints
+                const maxX = dc.clientWidth - 40;
+                if (currentX < 0) currentX = 0;
+                if (currentX > maxX) currentX = maxX;
+                tx.style.left = currentX + "px";
+            };
+            const onDragEnd = () => { isDraggingX = false; tx.style.cursor = 'grab'; };
+
+            tx.addEventListener('mousedown', onDragStart);
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('mouseup', onDragEnd);
+            tx.addEventListener('touchstart', (e) => { e.preventDefault(); onDragStart(e); });
+            window.addEventListener('touchmove', onDragMove);
+            window.addEventListener('touchend', onDragEnd);
             break;
 
         case 'geo':
