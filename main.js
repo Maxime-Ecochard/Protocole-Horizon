@@ -70,15 +70,18 @@ let state = {
 
 // --- DATA: The 9 Puzzles ---
 const PUZZLES = [
-    { id: 1, title: "SVT - La biodiversité locale", discipline: "SVT", tool: "camera", instruction: "Identifie l'arbre marqué. Compte le nombre de lobes sur une feuille.", question: "Nombre de lobes = A", validation: (val) => val > 0 },
-    { id: 2, title: "PC - Propagation de la lumière", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Mesure l'ombre du poteau. Divise la longueur par 2.", question: "Taille du panier en <strong>m</strong> = B", validation: (val) => val > 0 },
-    { id: 3, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Mesure la masse de 125 mL d'eau.", question: "Chiffre des dizaines en <strong>g</strong> = C", validation: (val) => val >= 0 },
-    { id: 4, title: "SVT - Effort physique", discipline: "SVT", tool: "bpm", instruction: "Cours 100m. Prends ton pouls sur 15s.", question: "Premier chiffre du BPM en <strong>bpm</strong> = D", validation: (val) => val >= 0 },
-    { id: 5, title: "PC - Spectre de la lumière", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Observe le spectre du soleil. Quelle couleur est la plus déviée ?", question: "Chiffre de la couleur = E", validation: (val) => val >= 0 },
-    { id: 6, title: "SVT - Érosion et Géologie", discipline: "SVT", tool: "input", instruction: "Trouve l'inclusion minérale. Sédimentaire(1), Magmatique(2), Métamorphique(3).", question: "Chiffre associé = F", validation: (val) => [1, 2, 3].includes(parseInt(val)) },
-    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins.", question: "Numéro du tube témoin = G", validation: (val) => val > 0 },
-    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
-    { id: 9, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités en <strong>°C</strong> = I", validation: (val) => val >= 0 }
+    { id: 1, title: "SVT - Botanique et Observation", discipline: "SVT", tool: "camera", instruction: "Chercher la plante « Rince-bouteille » (SE) -> noter le chiffre sur le mur. Chercher la plante « Rince-bouteille » (SW) -> noter le chiffre sur le mur. Compter les platanes dans la cour.", question: "Somme des trois nombres trouvés = A", validation: (val) => parseInt(val) === 10 },
+    { id: 2, title: "SVT - Le Palmier Mystère", discipline: "SVT", tool: "camera", instruction: "Dans le platane (près de la cantine), une graine de palmier a germé ! Trouve le palmier caché et prends-le en photo.", question: "Montre la photo à ton professeur pour obtenir le code = B", validation: (val) => val === "1" || val.toLowerCase() === "ok" },
+    { id: 3, title: "PC - Mesure d'ombre (Thalès)", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Complète le tableau de proportionnalité pour déterminer la taille réelle du panier de basket.", question: "Chiffre des unités de la taille (en cm) = C", validation: (val) => val > 0 },
+    { id: 4, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Pèse le bécher vide, puis l'eau. Utilise la Tare si nécessaire.", question: "Chiffre des dizaines en <strong>g</strong> = D", validation: (val) => val >= 0 },
+    { id: 5, title: "SVT - Fréquence Cardiaque", discipline: "SVT", tool: "bpm", instruction: "Mesure ta fréquence cardiaque au repos. Clique sur TAP pour démarrer le chrono de 30s.", question: "Quel est le chiffre des centaines du BPM ? = E", validation: (val) => val >= 0 },
+    { id: 6, title: "PC - Couleur des tables", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Quelle est la longueur d'onde dominante des tables de la cour ?", question: "Chiffre associé = F", validation: (val) => val >= 0 },
+    { id: 7, title: "SVT - Érosion et Géologie", discipline: "SVT", tool: "input", instruction: "Trouve l'inclusion minérale. Sédimentaire(1), Magmatique(2), Métamorphique(3).", question: "Chiffre associé = G", validation: (val) => [1, 2, 3].includes(parseInt(val)) },
+    { id: 8, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins en le superposant.", question: "Numéro du tube témoin = H", validation: (val) => val > 0 },
+    { id: 9, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = I", validation: (val) => [1, 2].includes(parseInt(val)) },
+    { id: 10, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités en <strong>°C</strong> = J", validation: (val) => val >= 0 },
+    { id: 11, title: "SVT - Espèce Invasive", discipline: "SVT", tool: "input", instruction: "Trouve l'Ailante près de la cafétéria. Ses racines sont agressives et elle produit des toxines.", question: "Entre combien de blocs de béton pousse-t-elle ? = K", validation: (val) => parseInt(val) === 2 },
+    { id: 12, title: "SVT - La Photosynthèse", discipline: "SVT", tool: "input", instruction: "Le pigment vert des végétaux est la chlorophylle. Il est situé dans des organites permettant la photosynthèse.", question: "Combien y a-t-il de lettres dans le nom de cet organite ? = L", validation: (val) => parseInt(val) === 12 }
 ];
 
 // --- CORE UTILS ---
@@ -101,8 +104,8 @@ function loadState() {
 }
 
 function getPuzzleId(group, step) {
-    // Carousel formula: Énigme_Affichée = ((Numéro_Groupe - 1 + Étape_Actuelle) % 9) + 1
-    return ((group - 1 + step) % 9) + 1;
+    // Carousel formula: Énigme_Affichée = ((Numéro_Groupe - 1 + Étape_Actuelle) % 12) + 1
+    return ((group - 1 + step) % 12) + 1;
 }
 
 // --- VIEW RADI RENDERING ---
@@ -117,11 +120,11 @@ function render() {
     }
 
     if (!state.group) {
-        renderHome(app);
-    } else if (state.currentStep >= 9) {
-        renderFinal(app);
+        renderHome(container);
+    } else if (state.currentStep >= 12) {
+        renderFinal(container);
     } else {
-        renderPuzzle(app);
+        renderPuzzle(container);
     }
 }
 
@@ -177,7 +180,7 @@ function renderPuzzle(container) {
     const header = document.createElement('div');
     header.className = 'enigme-header';
     header.innerHTML = `
-        <div class="badge">Étape ${state.currentStep + 1} / 9</div>
+        <div class="badge">Étape ${state.currentStep + 1} / 12</div>
         <div class="chrono" id="global-chrono">00:00</div>
     `;
     view.appendChild(header);
@@ -292,7 +295,7 @@ function renderFinal(container) {
             <p style="font-size: 1.2rem; margin-bottom: 2rem;">
                 Code de déverrouillage :<br>
                 <strong style="font-size: 2.5rem; color: var(--success);">
-                    ${state.responses[1] || '?'}${state.responses[2] || '?'}${state.responses[3] || '?'}
+                    ${state.responses[1] || '?'}${state.responses[2] || '?'}${state.responses[3] || '?'}${state.responses[4] || '?'}
                 </strong>
             </p>
             <p>Rendez-vous au point final avec votre enseignant.</p>
@@ -333,14 +336,14 @@ function renderAdmin(container) {
                 <thead>
                     <tr>
                         <th style="width: 40px;">GRP</th>
-                        ${[1,2,3,4,5,6,7,8,9].map(i => `<th>E${i}</th>`).join('')}
+                        ${[1,2,3,4,5,6,7,8,9,10,11,12].map(i => `<th>E${i}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody id="admin-tbody">
                     ${[1,2,3,4,5,6,7,8,9].map(g => `
                         <tr>
                             <td style="background: rgba(30, 41, 59, 1); color: #fff; font-weight: 900; border-radius: 6px;">${g}</td>
-                            ${[1,2,3,4,5,6,7,8,9].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
+                            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
                         </tr>
                     `).join('')}
                 </tbody>
@@ -373,7 +376,7 @@ function renderAdmin(container) {
 
     // Populate the table cells
     for(let g=1; g<=9; g++) {
-        for(let pId=1; pId<=9; pId++) {
+        for(let pId=1; pId<=12; pId++) {
             const cell = view.querySelector(`#cell-${g}-${pId}`);
             if (!cell) continue;
 
@@ -508,61 +511,116 @@ function loadTool(type, container, puzzleId) {
 
         case 'density':
             container.innerHTML = `
-                <div style="width: 100%; display: flex; justify-content: space-around; align-items: flex-end; height: 200px; padding-bottom: 2rem;">
-                    <!-- Balance -->
-                    <div style="text-align: center;">
-                        <div style="width: 100px; height: 20px; background: #475569; border-radius: 4px; margin: 0 auto;"></div>
-                        <div style="width: 120px; height: 40px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--success); font-family: monospace; font-size: 1.2rem; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-                            <span id="scale-val">0.0</span><small style="font-size: 0.6rem; margin-left: 2px;">g</small>
-                        </div>
-                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">BALANCE</p>
-                    </div>
-                    <!-- Éprouvette -->
-                    <div style="text-align: center; position: relative;">
-                        <div style="width: 50px; height: 150px; border: 3px solid rgba(255,255,255,0.3); border-top: none; border-radius: 0 0 10px 10px; position: relative; overflow: hidden; background: rgba(255,255,255,0.05);">
-                            <div id="water-level" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: rgba(59, 130, 246, 0.4); transition: height 0.5s ease-out;">
-                                <div style="position: absolute; top:0; width: 100%; height: 2px; background: rgba(255,255,255,0.5);"></div>
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                    <div style="width: 100%; display: flex; justify-content: space-around; align-items: flex-end; height: 160px; padding-bottom: 1rem;">
+                        <!-- Balance -->
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 10px; background: #475569; border-radius: 4px; margin: 0 auto;"></div>
+                            <div id="scale-screen" style="width: 110px; height: 40px; background: #1e293b; border: 2px solid #334155; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--success); font-family: monospace; font-size: 1.1rem; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+                                <span id="scale-val">0.0</span><small style="font-size: 0.6rem; margin-left: 2px;">g</small>
                             </div>
-                            <!-- graduations -->
-                            ${[140, 120, 100, 80, 60, 40, 20].map(v => `<div style="position: absolute; bottom: ${v}px; right: 0; width: 10px; height: 1px; background: rgba(255,255,255,0.3);"></div>`).join('')}
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">BALANCE</p>
                         </div>
-                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">ÉPROUVETTE (mL)</p>
+                        <!-- Récipient -->
+                        <div style="text-align: center; position: relative;">
+                             <div id="vessel" style="width: 60px; height: 110px; border: 3px solid rgba(255,255,255,0.3); border-top: none; border-radius: 0 0 10px 10px; position: relative; margin: 0 auto; background: rgba(255,255,255,0.05); overflow: hidden; display: none;">
+                                <div id="liquid" style="position: absolute; bottom: 0; width: 100%; height: 0%; background: rgba(59, 130, 246, 0.4); transition: height 0.8s ease-out;">
+                                    <div style="position: absolute; top:0; width: 100%; height: 2px; background: rgba(255,255,255,0.5);"></div>
+                                </div>
+                                ${[100, 80, 60, 40, 20].map(v => `<div style="position: absolute; bottom: ${v}px; right: 0; width: 8px; height: 1px; background: rgba(255,255,255,0.2);"></div>`).join('')}
+                             </div>
+                             <div id="vessel-placeholder" style="width: 60px; height: 110px; border: 2px dashed rgba(255,255,255,0.1); border-radius: 10px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.1); font-size: 0.7rem;">VIDE</div>
+                             <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">PLATEAU</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                        <button id="btn-beaker" class="secondary" style="font-size: 0.8rem; padding: 0.75rem;">PESER BÉCHER</button>
+                        <button id="btn-tare" class="secondary" style="font-size: 0.8rem; padding: 0.75rem;" disabled>TARE</button>
+                        <button id="btn-water" class="secondary" style="font-size: 0.8rem; padding: 0.75rem;" disabled>PESER EAU</button>
+                        <button id="btn-reset" class="secondary" style="font-size: 0.8rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-color: var(--error); color: var(--error);">RETIRER EAU</button>
                     </div>
                 </div>
-                <button id="btn-measure" class="secondary" style="font-size: 0.9rem; width: auto; margin: 0 auto; display: block;">POSER L'EAU (125mL)</button>
             `;
-            const scale = container.querySelector('#scale-val');
-            const water = container.querySelector('#water-level');
-            const bMeas = container.querySelector('#btn-measure');
-            bMeas.onclick = () => {
+            const scaleVal = container.querySelector('#scale-val');
+            const liquid = container.querySelector('#liquid');
+            const vessel = container.querySelector('#vessel');
+            const placeholder = container.querySelector('#vessel-placeholder');
+            const btnB = container.querySelector('#btn-beaker');
+            const btnT = container.querySelector('#btn-tare');
+            const btnW = container.querySelector('#btn-water');
+            const btnR = container.querySelector('#btn-reset');
+            
+            let beakerMass = 42.8; 
+            let waterMass = 125.0;
+            let currentTare = 0;
+
+            btnB.onclick = () => {
                 AudioEngine.play('click');
-                scale.innerText = "125.0";
-                water.style.height = "85%"; // 125mL approx
-                bMeas.disabled = true;
-                bMeas.innerText = "MESURE EFFECTUÉE";
+                vessel.style.display = 'block';
+                placeholder.style.display = 'none';
+                scaleVal.innerText = (beakerMass - currentTare).toFixed(1);
+                btnB.disabled = true;
+                btnT.disabled = false;
+                btnW.disabled = false;
+            };
+
+            btnT.onclick = () => {
+                AudioEngine.play('click');
+                currentTare = beakerMass;
+                scaleVal.innerText = "0.0";
+                btnT.disabled = true;
+            };
+
+            btnW.onclick = () => {
+                AudioEngine.play('click');
+                liquid.style.height = "85%";
+                const total = beakerMass + waterMass - currentTare;
+                scaleVal.innerText = total.toFixed(1);
+                btnW.disabled = true;
+            };
+
+            btnR.onclick = () => {
+                AudioEngine.play('click');
+                liquid.style.height = "0%";
+                scaleVal.innerText = (beakerMass - currentTare).toFixed(1);
+                btnW.disabled = false;
+                if (liquid.style.height === "0%") {
+                    vessel.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                    scaleVal.innerText = "0.0";
+                    currentTare = 0;
+                    btnB.disabled = false;
+                    btnT.disabled = true;
+                    btnW.disabled = true;
+                }
             };
             break;
+
+        case 'crossMath':
             container.innerHTML = `
                 <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="input-group" style="margin:0">
-                            <label>Taille Élevé (m)</label>
-                            <input type="number" id="h-eleve" placeholder="ex: 1.65" step="0.01">
-                        </div>
-                        <div class="input-group" style="margin:0">
-                            <label>Ombre Élevé (m)</label>
-                            <input type="number" id="o-eleve" placeholder="ex: 2.10" step="0.01">
-                        </div>
-                        <div class="input-group" style="margin:0">
-                            <label>Ombre Panier (m)</label>
-                            <input type="number" id="o-panier" placeholder="ex: 4.50" step="0.01">
-                        </div>
-                        <div class="input-group" style="margin:0">
-                            <label>Taille Panier (m)</label>
-                            <div id="h-panier-res" style="padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 12px; color: var(--success); font-weight: 800; text-align: center; font-size: 1.2rem;">-- m</div>
-                        </div>
-                    </div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Thalès : (Taille Élevé × Ombre Panier) / Ombre Élevé</p>
+                    <table class="cross-math-table">
+                        <thead>
+                            <tr>
+                                <th>Objet</th>
+                                <th>Taille réelle (m)</th>
+                                <th>Ombre (m)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="color: var(--accent-secondary); font-weight: 700;">Élève</td>
+                                <td><input type="number" id="h-eleve" placeholder="ex: 1.65" step="0.01"></td>
+                                <td><input type="number" id="o-eleve" placeholder="ex: 2.10" step="0.01"></td>
+                            </tr>
+                            <tr>
+                                <td style="color: var(--accent-secondary); font-weight: 700;">Panier</td>
+                                <td><div id="h-panier-res" style="font-weight: 900; color: var(--success); font-size: 1.2rem;">--</div></td>
+                                <td><input type="number" id="o-panier" placeholder="ex: 4.50" step="0.01"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; font-style: italic;">Produit en croix : (Taille Élève × Ombre Panier) / Ombre Élève</p>
                 </div>
             `;
             const hE = container.querySelector('#h-eleve');
@@ -574,7 +632,7 @@ function loadTool(type, container, puzzleId) {
                     const result = (parseFloat(hE.value) * parseFloat(oP.value)) / parseFloat(oE.value);
                     resH.innerText = result.toFixed(2) + " m";
                 } else {
-                    resH.innerText = "-- m";
+                    resH.innerText = "--";
                 }
             };
             hE.oninput = updateCalc; oE.oninput = updateCalc; oP.oninput = updateCalc;
@@ -582,35 +640,53 @@ function loadTool(type, container, puzzleId) {
 
         case 'bpm':
             container.innerHTML = `
-                <div style="text-align: center; width: 100%;">
+                <div style="text-align: center; width: 100%; position: relative;">
+                    <div id="bpm-timer" style="position: absolute; top: -10px; right: 0; background: rgba(59, 130, 246, 0.2); padding: 4px 12px; border-radius: 20px; font-family: monospace; color: var(--accent-secondary); border: 1px solid var(--accent-secondary); font-weight: 800;">30.0s</div>
                     <div id="tap-trigger" class="tap-btn">TAP</div>
-                    <div id="bpm-val" style="font-size: 2rem; font-weight: 900; color: #e74c3c; margin: 1rem 0;">-- BPM</div>
-                    <div style="width: 100%; background: #eee; height: 10px; border-radius: 5px; overflow: hidden;">
-                        <div id="bpm-progress" style="width: 0%; height: 100%; background: #e74c3c; transition: width 0.2s;"></div>
+                    <div id="bpm-val" style="font-size: 2.5rem; font-weight: 900; color: #ef4444; margin: 1rem 0; text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);">-- BPM</div>
+                    <div style="width: 100%; background: rgba(255,255,255,0.1); height: 12px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                        <div id="bpm-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ef4444, #f97316); transition: width 0.1s linear;"></div>
                     </div>
-                    <p id="bpm-hint" style="font-size: 0.8rem; margin-top: 0.5rem;">Tapez à chaque battement...</p>
+                    <p id="bpm-hint" style="font-size: 0.85rem; margin-top: 1rem; color: var(--text-muted);">Appuie sur TAP pour démarrer la mesure (30s)</p>
                 </div>
             `;
             const tapBtn = container.querySelector('#tap-trigger');
             const bpmVal = container.querySelector('#bpm-val');
             const progress = container.querySelector('#bpm-progress');
+            const timerDisplay = container.querySelector('#bpm-timer');
             let taps = [];
-            
+            let bpmStartTime = null;
+            let bpmDuration = 30000; 
+            let bpmTimerInterval = null;
+
             tapBtn.addEventListener('click', () => {
                 AudioEngine.play('click');
                 triggerHaptic('light');
                 const now = Date.now();
+                
+                if (!bpmStartTime) {
+                    bpmStartTime = now;
+                    container.querySelector('#bpm-hint').innerText = "Continue à taper au rythme de ton cœur...";
+                    bpmTimerInterval = setInterval(() => {
+                        const elapsed = Date.now() - bpmStartTime;
+                        const remaining = Math.max(0, (bpmDuration - elapsed) / 1000);
+                        timerDisplay.innerText = remaining.toFixed(1) + "s";
+                        progress.style.width = (elapsed / bpmDuration * 100) + "%";
+                        
+                        if (elapsed >= bpmDuration) {
+                            clearInterval(bpmTimerInterval);
+                            tapBtn.style.pointerEvents = 'none';
+                            tapBtn.style.opacity = '0.3';
+                            container.querySelector('#bpm-hint').innerHTML = "<span style='color:var(--success)'>Mesure terminée !</span>";
+                        }
+                    }, 100);
+                }
+
                 taps.push(now);
                 if (taps.length > 1) {
-                    const diffs = [];
-                    for(let i=1; i<taps.length; i++) diffs.push(taps[i] - taps[i-1]);
-                    const avg = diffs.reduce((a,b)=>a+b)/diffs.length;
-                    const bpm = Math.round(60000 / avg);
+                    const elapsedSinceStart = now - bpmStartTime;
+                    const bpm = Math.round((taps.length / (elapsedSinceStart / 60000)));
                     bpmVal.innerText = `${bpm} BPM`;
-                    
-                    const p = Math.min(100, taps.length * 10);
-                    progress.style.width = `${p}%`;
-                    if(taps.length >= 10) container.querySelector('#bpm-hint').innerText = "Rythme stabilisé !";
                 }
             });
             break;
@@ -701,49 +777,64 @@ function loadTool(type, container, puzzleId) {
 
         case 'concentration':
             container.innerHTML = `
-                <div style="width: 100%; text-align: center;">
-                    <div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="width: 100%; text-align: center; position: relative;">
+                    <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 3rem; background: rgba(255,255,255,0.02); padding: 1.5rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); position: relative;" id="scale-container">
                         ${[1, 2, 3, 4, 5, 6, 7, 8].map(i => `
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                                <div style="width: 25px; height: 80px; border: 2px solid rgba(255,255,255,0.2); border-radius: 0 0 12px 12px; position: relative;">
-                                    <div style="position: absolute; bottom: 0; width: 100%; height: ${10 + i * 11}%; background: rgba(59, 130, 246, ${0.1 + (i / 8) * 0.9}); border-radius: 0 0 10px 10px;"></div>
+                                <div style="width: 28px; height: 90px; border: 2px solid rgba(255,255,255,0.2); border-radius: 0 0 12px 12px; position: relative; background: rgba(255,255,255,0.03);">
+                                    <div style="position: absolute; bottom: 0; width: 100%; height: ${15 + i * 10}%; background: rgba(59, 130, 246, ${0.1 + (i / 8) * 0.8}); border-radius: 0 0 10px 10px;"></div>
                                 </div>
-                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent-secondary);">${i}</span>
+                                <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">${i}</span>
                             </div>
                         `).join('')}
                     </div>
                     
-                    <div id="drag-container" style="width: 100%; height: 120px; position: relative; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
-                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Glisse le TUBE X pour comparer :</p>
-                         <div id="tube-x" style="width: 35px; height: 90px; border: 3px solid var(--accent-primary); border-radius: 0 0 15px 15px; background: rgba(15, 23, 42, 0.8); position: absolute; left: 10px; cursor: grab; transition: transform 0.1s; z-index: 10;">
+                    <div id="drag-zone" style="width: 100%; height: 140px; position: relative; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;">
+                         <p style="font-size: 0.85rem; color: var(--accent-secondary); margin-bottom: 1rem; font-weight: 600;">Glisse le TUBE X sur l'échelle pour comparer :</p>
+                         <div id="tube-x" style="width: 32px; height: 100px; border: 3px solid var(--accent-primary); border-radius: 0 0 15px 15px; background: rgba(15, 23, 42, 0.95); position: absolute; left: 20px; top: 40px; cursor: grab; transition: none; z-index: 100; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);">
                             <div style="position: absolute; bottom: 0; width: 100%; height: 65%; background: rgba(59, 130, 246, 0.6); border-radius: 0 0 12px 12px;"></div>
-                            <span style="position: absolute; top: -20px; width: 100%; text-align: center; color: var(--accent-primary); font-weight: 900; font-size: 0.8rem;">X</span>
+                            <span style="position: absolute; top: -25px; width: 100%; text-align: center; color: var(--accent-primary); font-weight: 900; font-size: 1rem;">X</span>
                          </div>
                     </div>
                 </div>
             `;
             const tx = container.querySelector('#tube-x');
-            const dc = container.querySelector('#drag-container');
+            const dz = container.querySelector('#drag-zone');
             let isDraggingX = false;
-            let startX = 0;
-            let currentX = 0;
+            let startDragX = 0;
+            let startDragY = 0;
+            let currentPosX = 20;
+            let currentPosY = 40;
 
             const onDragStart = (e) => {
                 isDraggingX = true;
-                startX = (e.clientX || e.touches[0].clientX) - currentX;
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                startDragX = clientX - currentPosX;
+                startDragY = clientY - currentPosY;
                 tx.style.cursor = 'grabbing';
+                tx.style.boxShadow = '0 0 30px rgba(249, 115, 22, 0.6)';
             };
+            
             const onDragMove = (e) => {
                 if (!isDraggingX) return;
                 const clientX = e.clientX || e.touches[0].clientX;
-                currentX = clientX - startX;
-                // Constraints
-                const maxX = dc.clientWidth - 40;
-                if (currentX < 0) currentX = 0;
-                if (currentX > maxX) currentX = maxX;
-                tx.style.left = currentX + "px";
+                const clientY = e.clientY || e.touches[0].clientY;
+                currentPosX = clientX - startDragX;
+                currentPosY = clientY - startDragY;
+                
+                // Boundaries
+                const rect = dz.getBoundingClientRect();
+                // Allow vertical movement up to the scale
+                tx.style.left = currentPosX + "px";
+                tx.style.top = currentPosY + "px";
             };
-            const onDragEnd = () => { isDraggingX = false; tx.style.cursor = 'grab'; };
+            
+            const onDragEnd = () => { 
+                isDraggingX = false; 
+                tx.style.cursor = 'grab';
+                tx.style.boxShadow = '0 0 20px rgba(249, 115, 22, 0.3)';
+            };
 
             tx.addEventListener('mousedown', onDragStart);
             window.addEventListener('mousemove', onDragMove);
