@@ -93,7 +93,7 @@ function loadState() {
     if (saved) {
         state = { ...state, ...JSON.parse(saved) };
     }
-    
+
     // Check URL for admin mode
     const params = new URLSearchParams(window.location.search);
     if (params.get('admin') === 'true') {
@@ -141,7 +141,7 @@ function renderHome(container) {
                 <label for="group-select">Choisis ton groupe :</label>
                 <select id="group-select">
                     <option value="" disabled selected>Sélectionner...</option>
-                    ${[1,2,3,4,5,6,7,8,9].map(i => `<option value="${i}">Groupe ${i}</option>`).join('')}
+                    ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `<option value="${i}">Groupe ${i}</option>`).join('')}
                 </select>
             </div>
             <button id="start-btn" class="primary" disabled>DÉMARRER LA MISSION</button>
@@ -173,7 +173,7 @@ function renderPuzzle(container) {
 
     const view = document.createElement('div');
     view.className = 'view-container';
-    
+
     // Header
     const header = document.createElement('div');
     header.className = 'enigme-header';
@@ -257,12 +257,12 @@ function renderPuzzle(container) {
     if (puzzle.id === 9) {
         const btnVrai = view.querySelector('#btn-ai-vrai');
         const btnFaux = view.querySelector('#btn-ai-faux');
-        
+
         btnFaux.addEventListener('click', () => {
             AudioEngine.play('error');
             alert("Erreur ! Regarde bien l'endroit où elle pousse.");
         });
-        
+
         btnVrai.addEventListener('click', () => {
             if (!window.photoTaken) {
                 AudioEngine.play('error');
@@ -295,7 +295,7 @@ function renderPuzzle(container) {
                 alert("N'oublie pas de prendre le palmier en photo !");
                 return;
             }
-            
+
             if (puzzle.validation(val) || state.isDemoMode) {
                 AudioEngine.play('success');
                 triggerHaptic('success');
@@ -323,21 +323,27 @@ function renderPuzzle(container) {
     }
 }
 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzMPA_4JEnhXIAy0_iIj6HjP1LNod1SWfHBASMZwFpHAYziEHq-6X8XIJfyGdNqMBK1/exec";
+
 /**
  * Fonction de synchronisation avec le script Google Apps (GAS)
  */
 function syncWithBackend(group, puzzleId, value, notes) {
     console.log(`Syncing Group ${group}, Puzzle ${puzzleId}: ${value}`);
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(() => console.log("Sauvegarde GAS réussie"))
-            .withFailureHandler((err) => console.error("Erreur GAS:", err))
-            .enregistrerReponse(group, puzzleId, value, notes);
-    } else {
-        const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
-        logs.push({ date: new Date(), group: "Groupe " + group, enigme: "E" + puzzleId, valeur: value, notes: notes });
-        localStorage.setItem('gas_mock_logs', JSON.stringify(logs));
-    }
+    
+    // Sauvegarde locale de secours
+    const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
+    const payload = { date: new Date(), group: "Groupe " + group, enigme: "E" + puzzleId, valeur: value, notes: notes };
+    logs.push(payload);
+    localStorage.setItem('gas_mock_logs', JSON.stringify(logs));
+
+    // Envoi silencieux vers Google Sheets via l'API Web
+    fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Évite le blocage de sécurité du navigateur (CORS)
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+    }).catch(err => console.log("Erreur d'envoi réseau (normal si hors ligne)"));
 }
 
 function renderFinal(container) {
@@ -362,7 +368,7 @@ function renderFinal(container) {
     container.appendChild(view);
 
     view.querySelector('#reset-btn').addEventListener('click', () => {
-        if(confirm("Réinitialiser toute la partie ?")) {
+        if (confirm("Réinitialiser toute la partie ?")) {
             localStorage.removeItem(STATE_KEY);
             window.location.reload();
         }
@@ -372,7 +378,7 @@ function renderFinal(container) {
 function renderAdmin(container) {
     const app = document.getElementById('app');
     app.classList.add('admin-mode');
-    
+
     container.innerHTML = `
         <div class="admin-header">
             <div>
@@ -393,14 +399,14 @@ function renderAdmin(container) {
                 <thead>
                     <tr>
                         <th style="width: 40px;">GRP</th>
-                        ${[1,2,3,4,5,6,7,8,9,10].map(i => `<th>E${i}</th>`).join('')}
+                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<th>E${i}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody id="admin-tbody">
-                    ${[1,2,3,4,5,6,7,8,9].map(g => `
+                    ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(g => `
                         <tr>
                             <td style="background: rgba(30, 41, 59, 1); color: #fff; font-weight: 900; border-radius: 6px;">${g}</td>
-                            ${[1,2,3,4,5,6,7,8,9,10].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
+                            ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
                         </tr>
                     `).join('')}
                 </tbody>
@@ -432,8 +438,8 @@ function renderAdmin(container) {
     }
 
     // Populate the table cells
-    for(let g=1; g<=9; g++) {
-        for(let pId=1; pId<=10; pId++) {
+    for (let g = 1; g <= 9; g++) {
+        for (let pId = 1; pId <= 10; pId++) {
             const cell = view.querySelector(`#cell-${g}-${pId}`);
             if (!cell) continue;
 
@@ -446,7 +452,7 @@ function renderAdmin(container) {
                 const isCorrect = puzzle.validation(val);
                 cell.className = isCorrect ? 'status-correct' : 'status-incorrect';
                 cell.innerText = isCorrect ? "✔️ " + val : "❌ " + val;
-                cell.title = `Réponse: ${val}\nNotes: ${notes}`; 
+                cell.title = `Réponse: ${val}\nNotes: ${notes}`;
             } else if (state.group === g && pId === getPuzzleId(state.group, state.currentStep)) {
                 cell.className = 'status-1';
                 cell.innerText = '⏳';
@@ -471,7 +477,7 @@ function renderAdmin(container) {
     });
 
     view.querySelector('#full-reset').addEventListener('click', () => {
-        if(confirm("REMETTRE À ZÉRO TOUS LES GROUPES ?")) {
+        if (confirm("REMETTRE À ZÉRO TOUS LES GROUPES ?")) {
             localStorage.clear();
             window.location.href = window.location.pathname;
         }
@@ -482,8 +488,8 @@ function renderAdmin(container) {
 
 function loadTool(type, container, puzzleId) {
     container.innerHTML = '';
-    
-    switch(type) {
+
+    switch (type) {
         case 'camera':
             container.innerHTML = `
                 <div id="camera-box" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -505,8 +511,8 @@ function loadTool(type, container, puzzleId) {
                 const btn = container.querySelector('#open-cam');
                 if (!stream) {
                     try {
-                        stream = await navigator.mediaDevices.getUserMedia({ 
-                            video: { facingMode: { exact: 'environment' } || 'environment' } 
+                        stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: { exact: 'environment' } || 'environment' }
                         });
                         video.style.display = 'block';
                         canvas.style.display = 'none';
@@ -531,7 +537,7 @@ function loadTool(type, container, puzzleId) {
                     canvas.style.display = 'block';
                     btn.innerText = "📸 Capture / Photo";
                     window.photoTaken = true;
-                    if(stream) stream.getTracks().forEach(t => t.stop());
+                    if (stream) stream.getTracks().forEach(t => t.stop());
                     stream = null;
                 }
             });
@@ -591,8 +597,8 @@ function loadTool(type, container, puzzleId) {
                     try {
                         const permission = await DeviceOrientationEvent.requestPermission();
                         if (permission === 'granted') {
-                             window.addEventListener('deviceorientation', handleOrientation, true);
-                             btnComp.style.display = 'none';
+                            window.addEventListener('deviceorientation', handleOrientation, true);
+                            btnComp.style.display = 'none';
                         }
                     } catch (e) { alert("Permission boussole refusée."); }
                 } else {
@@ -651,8 +657,8 @@ function loadTool(type, container, puzzleId) {
             const btnT = container.querySelector('#btn-tare');
             const btnW = container.querySelector('#btn-water');
             const btnR = container.querySelector('#btn-reset');
-            
-            let beakerMass = 42.8; 
+
+            let beakerMass = 42.8;
             let waterMass = 125.0;
             let currentTare = 0;
 
@@ -758,14 +764,14 @@ function loadTool(type, container, puzzleId) {
             const timerDisplay = container.querySelector('#bpm-timer');
             let taps = [];
             let bpmStartTime = null;
-            let bpmDuration = 30000; 
+            let bpmDuration = 30000;
             let bpmTimerInterval = null;
 
             tapBtn.addEventListener('click', () => {
                 AudioEngine.play('click');
                 triggerHaptic('light');
                 const now = Date.now();
-                
+
                 if (!bpmStartTime) {
                     bpmStartTime = now;
                     container.querySelector('#bpm-hint').innerText = "Continue à taper au rythme de ton cœur...";
@@ -774,7 +780,7 @@ function loadTool(type, container, puzzleId) {
                         const remaining = Math.max(0, (bpmDuration - elapsed) / 1000);
                         timerDisplay.innerText = remaining.toFixed(1) + "s";
                         progress.style.width = (elapsed / bpmDuration * 100) + "%";
-                        
+
                         if (elapsed >= bpmDuration) {
                             clearInterval(bpmTimerInterval);
                             tapBtn.style.pointerEvents = 'none';
@@ -815,7 +821,7 @@ function loadTool(type, container, puzzleId) {
                 const percent = x / rect.width;
                 picker.style.left = `${x}px`;
                 picker.style.display = 'block';
-                
+
                 let idx = Math.floor(percent * 6);
                 idx = Math.max(0, Math.min(5, idx));
                 res.innerText = `${colors[idx]} (Valeur: ${values[idx]})`;
@@ -851,29 +857,29 @@ function loadTool(type, container, puzzleId) {
                     dataAr = new Uint8Array(analyzer.frequencyBinCount);
                     startBtnAudio.style.display = 'none';
                     drawAudioSpectrum();
-                } catch(e) { alert("Micro non supporté."); }
+                } catch (e) { alert("Micro non supporté."); }
             };
 
             function drawAudioSpectrum() {
-                if(!analyzer) return;
+                if (!analyzer) return;
                 requestAnimationFrame(drawAudioSpectrum);
                 analyzer.getByteFrequencyData(dataAr);
                 const ctxAudio = audioCanvas.getContext('2d');
                 ctxAudio.fillStyle = 'rgba(15, 23, 42, 1)';
                 ctxAudio.fillRect(0, 0, audioCanvas.width, audioCanvas.height);
-                
+
                 let mVal = 0, mIdx = 0;
                 const bW = (audioCanvas.width / dataAr.length) * 2.5;
                 let curX = 0;
-                for(let i = 0; i < dataAr.length; i++) {
+                for (let i = 0; i < dataAr.length; i++) {
                     const bH = dataAr[i] / 2;
                     ctxAudio.fillStyle = `rgb(59, 130, 246)`;
                     ctxAudio.fillRect(curX, audioCanvas.height - bH, bW, bH);
                     curX += bW + 1;
-                    if(dataAr[i] > mVal) { mVal = dataAr[i]; mIdx = i; }
+                    if (dataAr[i] > mVal) { mVal = dataAr[i]; mIdx = i; }
                 }
                 const freqActual = mIdx * aCtx.sampleRate / analyzer.fftSize;
-                if(mVal > 50) freqValText.innerText = `${Math.round(freqActual)} Hz`;
+                if (mVal > 50) freqValText.innerText = `${Math.round(freqActual)} Hz`;
             }
             break;
 
@@ -917,7 +923,7 @@ function loadTool(type, container, puzzleId) {
                 tx.style.cursor = 'grabbing';
                 tx.style.boxShadow = '0 0 30px rgba(249, 115, 22, 0.6)';
             };
-            
+
             const onDragMove = (e) => {
                 if (!isDraggingX) return;
                 const clientX = e.clientX || e.touches[0].clientX;
@@ -927,9 +933,9 @@ function loadTool(type, container, puzzleId) {
                 tx.style.left = currentPosX + "px";
                 tx.style.top = currentPosY + "px";
             };
-            
-            const onDragEnd = () => { 
-                isDraggingX = false; 
+
+            const onDragEnd = () => {
+                isDraggingX = false;
                 tx.style.cursor = 'grab';
                 tx.style.boxShadow = '0 0 20px rgba(249, 115, 22, 0.3)';
             };
@@ -987,7 +993,7 @@ function loadTool(type, container, puzzleId) {
                         vAi.style.display = 'block'; cAi.style.display = 'none';
                         vAi.srcObject = aiStream;
                         btnAiCam.innerText = "SAISIR";
-                    } catch(e) { alert("Caméra non accessible"); }
+                    } catch (e) { alert("Caméra non accessible"); }
                 } else {
                     cAi.width = vAi.videoWidth; cAi.height = vAi.videoHeight;
                     ctxAi.drawImage(vAi, 0, 0);
@@ -995,7 +1001,7 @@ function loadTool(type, container, puzzleId) {
                     btnAiCam.innerText = "📸 REPRENDRE";
                     btnAiNext.style.display = 'block';
                     window.photoTaken = true;
-                    if(aiStream) aiStream.getTracks().forEach(t => t.stop());
+                    if (aiStream) aiStream.getTracks().forEach(t => t.stop());
                     aiStream = null;
                 }
             };
@@ -1006,10 +1012,10 @@ function loadTool(type, container, puzzleId) {
             cAi.addEventListener('mousemove', (e) => { if (isDrawAi) drawAi(e); });
             cAi.addEventListener('mouseup', () => { isDrawAi = false; ctxAi.beginPath(); });
             cAi.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawAi = true; drawAi(e); });
-            cAi.addEventListener('touchmove', (e) => { e.preventDefault(); if(isDrawAi) drawAi(e); });
+            cAi.addEventListener('touchmove', (e) => { e.preventDefault(); if (isDrawAi) drawAi(e); });
             cAi.addEventListener('touchend', () => { isDrawAi = false; ctxAi.beginPath(); });
             container.querySelector('#clear-ailante').onclick = () => ctxAi.clearRect(0, 0, cAi.width, cAi.height);
-            
+
             function drawAi(e) {
                 const rect = cAi.getBoundingClientRect();
                 const scaleX = cAi.width / rect.width;
@@ -1058,7 +1064,7 @@ function loadTool(type, container, puzzleId) {
             const pIn = container.querySelector('#pigment-in');
             const step1 = container.querySelector('#photo-step-1');
             const step2 = container.querySelector('#photo-step-2');
-            
+
             container.querySelector('#pigment-check').onclick = () => {
                 if (pIn.value.toLowerCase().includes('chlorophylle')) {
                     step1.style.display = 'none';
