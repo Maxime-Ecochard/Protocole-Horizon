@@ -70,16 +70,16 @@ let state = {
 
 // --- DATA: The 10 Puzzles ---
 const PUZZLES = [
-    { id: 1, title: "SVT - Orientation Botanique", discipline: "SVT", tool: "compass", instruction: "Chercher la plante appelée « Rince-bouteille » située au sud-est dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><br>Chercher la plante appelée « Rince-bouteille » située au sud-ouest dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><img src=\"https://plantes-avenue.fr/25274-large_default/rince-bouteilles-silence-ca-pousse-.jpg\" style=\"width: 100%; border-radius: 12px; margin-top: 1rem;\">", question: "Produit des deux chiffres trouvés = A", validation: (val) => parseInt(val) === 6 },
-    { id: 2, title: "SVT - Platanes et Palmier", discipline: "SVT", tool: "camera", instruction: "Combien y a-t-il de platanes dans la cour ?<br><br>Dans un platane, une graine de palmier a germé ! Trouve le palmier caché et prends-le en photo.<br><small>(Indice : le platane est près de la cantine, ouvre les yeux !)</small>", question: "Nombre de platanes = B", validation: (val) => parseInt(val) === 5 },
-    { id: 3, title: "PC - Mesure d'ombre (Thalès)", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Complète le tableau de proportionnalité pour déterminer la taille réelle du panier de basket.", question: "Chiffre des unités de la taille (en cm) = C", validation: (val) => val > 0 },
-    { id: 4, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Pèse le bécher vide, puis l'eau. Utilise la Tare si nécessaire.", question: "Chiffre des dizaines en <strong>g</strong> = D", validation: (val) => val >= 0 },
-    { id: 5, title: "SVT - Fréquence Cardiaque", discipline: "SVT", tool: "bpm", instruction: "Mesure ta fréquence cardiaque au repos. Clique sur TAP pour démarrer le chrono de 30s.", question: "Quel est le chiffre des centaines du BPM ? = E", validation: (val) => val >= 0 },
-    { id: 6, title: "PC - Couleur des tables", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Quelle est la longueur d'onde dominante des tables de la cour ?", question: "Chiffre associé = F", validation: (val) => val >= 0 },
-    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins en le superposant.", question: "Numéro du tube témoin = G", validation: (val) => parseInt(val) === 4 },
-    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
-    { id: 9, title: "SVT - Espèce Invasive", discipline: "SVT", tool: "ailante", instruction: "Trouve l'Ailante (Faux-vernis du Japon) près de la cafétéria. Prends une photo et identifie les folioles.", question: "Elle pousse entre 2 blocs de béton ? (vrai / faux) = I", validation: (val) => val.toLowerCase() === "vrai" },
-    { id: 10, title: "SVT - La Photosynthèse", discipline: "SVT", tool: "photosynthesis", instruction: "Découvre les secrets de la photosynthèse.", question: "Combien y a-t-il de lettres dans le nom de cet organite ? = J", validation: (val) => parseInt(val) === 12 }
+    { id: 1, title: "SVT - Orientation Botanique", discipline: "SVT", tool: "compass", instruction: "Chercher la plante appelée « Rince-bouteille » située au sud-est dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><br>Chercher la plante appelée « Rince-bouteille » située au sud-ouest dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><img src=\"https://plantes-avenue.fr/25274-large_default/rince-bouteilles-silence-ca-pousse-.jpg\" style=\"width: 100%; border-radius: 12px; margin-top: 1rem;\">", question: "Produit des deux chiffres trouvés", validation: (val) => parseInt(val) === 6 },
+    { id: 2, title: "SVT - Platanes et Palmier", discipline: "SVT", tool: "camera", instruction: "Combien y a-t-il de platanes dans la cour ?<br><br>Dans un platane, une graine de palmier a germé ! Trouve le palmier caché et prends-le en photo.<br><br><button id='hint-btn' class='secondary' style='font-size: 0.8rem; padding: 0.5rem;'>Obtenir un indice</button>", question: "Nombre de platanes", validation: (val) => parseInt(val) === 5 && window.photoTaken === true },
+    { id: 3, title: "PC - Mesure d'ombre (Thalès)", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Complète le tableau de proportionnalité pour déterminer la taille réelle du panier de basket.", question: "Chiffre des unités de la taille (en cm)", validation: (val) => val > 0 },
+    { id: 4, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Pèse le bécher vide, puis l'eau. Utilise la Tare si nécessaire.", question: "Chiffre des dizaines en <strong>g</strong>", validation: (val) => parseInt(val) === 2 },
+    { id: 5, title: "SVT - Fréquence Cardiaque", discipline: "SVT", tool: "bpm", instruction: "Mesure ta fréquence cardiaque au repos. Clique sur TAP pour démarrer le chrono de 30s.", question: "Quel est le chiffre des centaines du BPM ?", validation: (val) => parseInt(val) === 1 },
+    { id: 6, title: "PC - Couleur des tables", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Quelle est la longueur d'onde dominante des tables de la cour ?", question: "Chiffre associé", validation: (val) => parseInt(val) === 2 },
+    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins en le superposant.", question: "Numéro du tube témoin", validation: (val) => parseInt(val) === 4 },
+    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Fréquence du diapason en question (en Hz)", validation: (val) => parseInt(val) === 144 },
+    { id: 9, title: "SVT - Espèce Invasive", discipline: "SVT", tool: "ailante", instruction: "Trouve l'Ailante (Faux-vernis du Japon) près de la cafétéria. Prends une photo et identifie les folioles.", question: "As-tu terminé l'analyse ? (Tape OUI)", validation: (val) => val.toLowerCase() === "oui" },
+    { id: 10, title: "SVT - La Photosynthèse", discipline: "SVT", tool: "photosynthesis", instruction: "Découvre les secrets de la photosynthèse.", question: "Combien y a-t-il de lettres dans le nom de cet organite ?", validation: (val) => parseInt(val) === 12 }
 ];
 
 // --- CORE UTILS ---
@@ -213,15 +213,27 @@ function renderPuzzle(container) {
             </div>
         ` : ''}
 
-        <div class="input-group">
-            <label>${puzzle.question}</label>
-            <input type="number" id="puzzle-response" placeholder="Ta réponse..." value="${state.responses[puzzleId] || ''}">
-        </div>
-
-        <button id="next-btn" class="primary">VALIDER ET CONTINUER</button>
+        ${puzzle.id === 9 ? `
+            <div class="input-group" style="margin-top: 1.5rem;">
+                <label>Elle pousse entre 2 blocs de béton ?</label>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button id="btn-ai-vrai" class="secondary" style="flex:1;">VRAI</button>
+                    <button id="btn-ai-faux" class="secondary" style="flex:1;">FAUX</button>
+                </div>
+            </div>
+        ` : `
+            <div class="input-group">
+                <label>${puzzle.question}</label>
+                <input type="number" id="puzzle-response" placeholder="Ta réponse..." value="${state.responses[puzzleId] || ''}">
+            </div>
+            <button id="next-btn" class="primary">VALIDER ET CONTINUER</button>
+        `}
     `;
     view.appendChild(card);
     container.appendChild(view);
+
+    // Reset photo state
+    window.photoTaken = false;
 
     // Initialize Chrono
     updateChrono();
@@ -232,28 +244,75 @@ function renderPuzzle(container) {
     loadTool(puzzle.tool, toolContainer, puzzleId);
 
     // Event Listeners
-    const nextBtn = view.querySelector('#next-btn');
-    const responseInput = view.querySelector('#puzzle-response');
+    const hintBtn = view.querySelector('#hint-btn');
+    if (hintBtn) {
+        hintBtn.addEventListener('click', () => {
+            alert("INDICE : Le platane est près de la cantine, ouvre les yeux !");
+            hintBtn.style.display = 'none';
+        });
+    }
+
     const notesInput = view.querySelector('#puzzle-notes');
 
-    nextBtn.addEventListener('click', () => {
-        const val = responseInput.value;
-        if (puzzle.validation(val) || state.isDemoMode) {
+    if (puzzle.id === 9) {
+        const btnVrai = view.querySelector('#btn-ai-vrai');
+        const btnFaux = view.querySelector('#btn-ai-faux');
+        
+        btnFaux.addEventListener('click', () => {
+            AudioEngine.play('error');
+            alert("Erreur ! Regarde bien l'endroit où elle pousse.");
+        });
+        
+        btnVrai.addEventListener('click', () => {
+            if (!window.photoTaken) {
+                AudioEngine.play('error');
+                alert("N'oublie pas de prendre l'Ailante en photo !");
+                return;
+            }
+            if (!window.ailanteFolioleCheck) {
+                AudioEngine.play('error');
+                alert("Tu dois d'abord répondre à la première question (Vrai/Faux) sur les folioles !");
+                return;
+            }
             AudioEngine.play('success');
             triggerHaptic('success');
-            state.responses[puzzleId] = val || (state.isDemoMode ? "DEMO" : "");
+            state.responses[puzzleId] = "vrai";
             state.notes[puzzleId] = notesInput.value;
             state.currentStep++;
             clearInterval(chronoInterval);
             saveState();
             syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId]);
             render();
-        } else {
-            AudioEngine.play('error');
-            triggerHaptic('error');
-            alert("Réponse non valide. Vérifie tes mesures !");
-        }
-    });
+        });
+    } else {
+        const nextBtn = view.querySelector('#next-btn');
+        const responseInput = view.querySelector('#puzzle-response');
+
+        nextBtn.addEventListener('click', () => {
+            const val = responseInput.value;
+            if (puzzle.id === 2 && parseInt(val) === 5 && !window.photoTaken) {
+                AudioEngine.play('error');
+                alert("N'oublie pas de prendre le palmier en photo !");
+                return;
+            }
+            
+            if (puzzle.validation(val) || state.isDemoMode) {
+                AudioEngine.play('success');
+                triggerHaptic('success');
+                state.responses[puzzleId] = val || (state.isDemoMode ? "DEMO" : "");
+                state.notes[puzzleId] = notesInput.value;
+                state.currentStep++;
+                clearInterval(chronoInterval);
+                saveState();
+                syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId]);
+                render();
+            } else {
+                AudioEngine.play('error');
+                triggerHaptic('error');
+                alert("Réponse non valide. Vérifie tes mesures !");
+            }
+        });
+    }
 
     function updateChrono() {
         const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
@@ -471,6 +530,7 @@ function loadTool(type, container, puzzleId) {
                     video.style.display = 'none';
                     canvas.style.display = 'block';
                     btn.innerText = "📸 Capture / Photo";
+                    window.photoTaken = true;
                     if(stream) stream.getTracks().forEach(t => t.stop());
                     stream = null;
                 }
@@ -509,10 +569,6 @@ function loadTool(type, container, puzzleId) {
             container.innerHTML = `
                 <div style="width: 100%; text-align: center; position: relative; padding-bottom: 2rem;">
                     <div id="compass-body" style="width: 160px; height: 160px; border-radius: 50%; border: 8px solid #1e293b; margin: 0 auto; position: relative; background: radial-gradient(circle, #334155 0%, #0f172a 100%); box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);">
-                        <div id="needle" style="position: absolute; top: 50%; left: 50%; width: 6px; height: 100px; margin-top: -500px; margin-left: -3px; transition: transform 0.1s; transform-origin: center 50px; z-index: 2;">
-                            <div style="width: 100%; height: 50px; background: #ef4444; border-radius: 3px 3px 0 0;"></div>
-                            <div style="width: 100%; height: 50px; background: #e2e8f0; border-radius: 0 0 3px 3px;"></div>
-                        </div>
                         <div id="needle" style="position: absolute; top: 50%; left: 50%; width: 6px; height: 100px; margin-top: -50px; margin-left: -3px; transition: transform 0.1s; transform-origin: center center; z-index: 2;">
                             <div style="width: 100%; height: 50%; background: #ef4444; border-radius: 3px 3px 0 0;"></div>
                             <div style="width: 100%; height: 50%; background: #e2e8f0; border-radius: 0 0 3px 3px;"></div>
@@ -837,8 +893,8 @@ function loadTool(type, container, puzzleId) {
                     
                     <div id="drag-zone" style="width: 100%; height: 140px; position: relative; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;">
                          <p style="font-size: 0.85rem; color: var(--accent-secondary); margin-bottom: 1rem; font-weight: 600;">Glisse le TUBE X sur l'échelle pour comparer :</p>
-                         <div id="tube-x" style="width: 32px; height: 100px; border: 3px solid var(--accent-primary); border-radius: 0 0 15px 15px; background: rgba(15, 23, 42, 0.95); position: absolute; left: 20px; top: 40px; cursor: grab; transition: none; z-index: 100; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);">
-                            <div style="position: absolute; bottom: 0; width: 100%; height: 65%; background: rgba(59, 130, 246, 0.5); border-radius: 0 0 12px 12px;"></div>
+                         <div id="tube-x" style="width: 28px; height: 90px; border: 2px solid var(--accent-primary); border-radius: 0 0 12px 12px; background: rgba(255,255,255,0.03); position: absolute; left: 20px; top: 40px; cursor: grab; z-index: 100; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);">
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 55%; background: rgba(59, 130, 246, 0.5); border-radius: 0 0 9px 9px;"></div>
                             <span style="position: absolute; top: -25px; width: 100%; text-align: center; color: var(--accent-primary); font-weight: 900; font-size: 1rem;">X</span>
                          </div>
                     </div>
@@ -887,29 +943,31 @@ function loadTool(type, container, puzzleId) {
             break;
 
         case 'ailante':
+            window.ailanteFolioleCheck = false;
             container.innerHTML = `
                 <div id="ailante-step-1">
                      <p style="font-size: 0.85rem; margin-bottom: 1rem; color: var(--text-muted);">Prends en photo l'Ailante et entoure les folioles sur ton écran.</p>
                      <video id="v-ailante" style="width: 100%; border-radius: 12px; display: none;" autoplay playsinline></video>
-                     <canvas id="c-ailante" style="width: 100%; border-radius: 12px; background: #111; min-height: 200px; display: block; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                     <canvas id="c-ailante" style="width: 100%; border-radius: 12px; background: #0f172a; min-height: 200px; display: block; border: 1px solid rgba(255,255,255,0.1);"></canvas>
                      <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                         <button id="cam-ailante" class="secondary" style="font-size: 0.8rem;">📸 CAPTURE</button>
-                        <button id="next-ailante" class="secondary" style="font-size: 0.8rem; display: none; background: var(--accent-secondary); color: white;">ÉTAPE SUIVANTE</button>
+                        <button id="clear-ailante" class="secondary" style="font-size: 0.8rem; background: rgba(255,255,255,0.05); color: #fff;">EFFACER</button>
                      </div>
+                     <button id="next-ailante" class="primary" style="margin-top: 1rem; display: none; width: 100%;">ÉTAPE SUIVANTE</button>
                 </div>
                 <div id="ailante-step-2" style="display: none;">
                     <div class="card" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary); margin-bottom: 1rem;">
-                        <p style="font-size: 0.9rem;"><strong>VRAI OU FAUX ?</strong></p>
+                        <p style="font-size: 0.9rem;"><strong>VRAI OU FAUX ? (1/2)</strong></p>
                         <p style="font-size: 0.85rem; margin-top: 0.5rem;">Ses feuilles sont constituées de plus de 10 folioles.</p>
                         <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                            <button id="vf-vrai" class="secondary" style="font-size: 0.8rem;">VRAI</button>
-                            <button id="vf-faux" class="secondary" style="font-size: 0.8rem;">FAUX</button>
+                            <button id="vf-vrai-1" class="secondary" style="font-size: 0.8rem;">VRAI</button>
+                            <button id="vf-faux-1" class="secondary" style="font-size: 0.8rem;">FAUX</button>
                         </div>
                     </div>
-                    <div id="ailante-final" style="display: none;">
-                         <p style="font-size: 0.85rem; color: var(--accent-primary); font-weight: 700;">Correct ! Reste une dernière question...</p>
-                         <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">Réponds à la question en bas de la page.</p>
-                    </div>
+                </div>
+                <div id="ailante-final" style="display: none;">
+                     <p style="font-size: 0.85rem; color: var(--success); font-weight: 700;">Analyse des folioles terminée !</p>
+                     <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">Réponds à la question finale en bas sous le bloc-notes.</p>
                 </div>
             `;
             const vAi = container.querySelector('#v-ailante');
@@ -919,6 +977,7 @@ function loadTool(type, container, puzzleId) {
             const btnAiNext = container.querySelector('#next-ailante');
             const stepAi1 = container.querySelector('#ailante-step-1');
             const stepAi2 = container.querySelector('#ailante-step-2');
+            const stepAi3 = container.querySelector('#ailante-step-3');
             let aiStream = null;
 
             btnAiCam.onclick = async () => {
@@ -935,18 +994,42 @@ function loadTool(type, container, puzzleId) {
                     vAi.style.display = 'none'; cAi.style.display = 'block';
                     btnAiCam.innerText = "📸 REPRENDRE";
                     btnAiNext.style.display = 'block';
+                    window.photoTaken = true;
                     if(aiStream) aiStream.getTracks().forEach(t => t.stop());
                     aiStream = null;
                 }
             };
 
+            // Drawing logic Ailante
+            let isDrawAi = false;
+            cAi.addEventListener('mousedown', (e) => { isDrawAi = true; drawAi(e); });
+            cAi.addEventListener('mousemove', (e) => { if (isDrawAi) drawAi(e); });
+            cAi.addEventListener('mouseup', () => { isDrawAi = false; ctxAi.beginPath(); });
+            cAi.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawAi = true; drawAi(e); });
+            cAi.addEventListener('touchmove', (e) => { e.preventDefault(); if(isDrawAi) drawAi(e); });
+            cAi.addEventListener('touchend', () => { isDrawAi = false; ctxAi.beginPath(); });
+            container.querySelector('#clear-ailante').onclick = () => ctxAi.clearRect(0, 0, cAi.width, cAi.height);
+            
+            function drawAi(e) {
+                const rect = cAi.getBoundingClientRect();
+                const scaleX = cAi.width / rect.width;
+                const scaleY = cAi.height / rect.height;
+                const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                ctxAi.lineWidth = 6; ctxAi.lineCap = 'round'; ctxAi.strokeStyle = '#f97316';
+                ctxAi.lineTo(x * scaleX, y * scaleY); ctxAi.stroke();
+                ctxAi.beginPath(); ctxAi.moveTo(x * scaleX, y * scaleY);
+            }
+
             btnAiNext.onclick = () => { stepAi1.style.display = 'none'; stepAi2.style.display = 'block'; };
 
-            container.querySelector('#vf-vrai').onclick = () => {
+            container.querySelector('#vf-vrai-1').onclick = () => {
                 AudioEngine.play('success');
+                stepAi2.style.display = 'none';
+                window.ailanteFolioleCheck = true;
                 container.querySelector('#ailante-final').style.display = 'block';
             };
-            container.querySelector('#vf-faux').onclick = () => {
+            container.querySelector('#vf-faux-1').onclick = () => {
                 AudioEngine.play('error');
                 alert("Erreur ! Regarde bien les folioles.");
             };
