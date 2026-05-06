@@ -68,20 +68,18 @@ let state = {
     isAdmin: false
 };
 
-// --- DATA: The 9 Puzzles ---
+// --- DATA: The 10 Puzzles ---
 const PUZZLES = [
-    { id: 1, title: "SVT - Botanique et Observation", discipline: "SVT", tool: "camera", instruction: "Chercher la plante « Rince-bouteille » (SE) -> noter le chiffre sur le mur. Chercher la plante « Rince-bouteille » (SW) -> noter le chiffre sur le mur. Compter les platanes dans la cour.", question: "Somme des trois nombres trouvés = A", validation: (val) => parseInt(val) === 10 },
-    { id: 2, title: "SVT - Le Palmier Mystère", discipline: "SVT", tool: "camera", instruction: "Dans le platane (près de la cantine), une graine de palmier a germé ! Trouve le palmier caché et prends-le en photo.", question: "Montre la photo à ton professeur pour obtenir le code = B", validation: (val) => val === "1" || val.toLowerCase() === "ok" },
+    { id: 1, title: "SVT - Orientation Botanique", discipline: "SVT", tool: "compass", instruction: "Chercher la plante appelée « Rince-bouteille » située au sud-est dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><br>Chercher la plante appelée « Rince-bouteille » située au sud-ouest dans la cour et noter le chiffre indiqué sur le mur à proximité.<br><img src=\"https://plantes-avenue.fr/25274-large_default/rince-bouteilles-silence-ca-pousse-.jpg\" style=\"width: 100%; border-radius: 12px; margin-top: 1rem;\">", question: "Produit des deux chiffres trouvés = A", validation: (val) => parseInt(val) === 6 },
+    { id: 2, title: "SVT - Platanes et Palmier", discipline: "SVT", tool: "camera", instruction: "Combien y a-t-il de platanes dans la cour ?<br><br>Dans un platane, une graine de palmier a germé ! Trouve le palmier caché et prends-le en photo.<br><small>(Indice : le platane est près de la cantine, ouvre les yeux !)</small>", question: "Nombre de platanes = B", validation: (val) => parseInt(val) === 5 },
     { id: 3, title: "PC - Mesure d'ombre (Thalès)", discipline: "Physique-Chimie", tool: "crossMath", instruction: "Complète le tableau de proportionnalité pour déterminer la taille réelle du panier de basket.", question: "Chiffre des unités de la taille (en cm) = C", validation: (val) => val > 0 },
     { id: 4, title: "PC - Masse volumique", discipline: "Physique-Chimie", tool: "density", instruction: "Pèse le bécher vide, puis l'eau. Utilise la Tare si nécessaire.", question: "Chiffre des dizaines en <strong>g</strong> = D", validation: (val) => val >= 0 },
     { id: 5, title: "SVT - Fréquence Cardiaque", discipline: "SVT", tool: "bpm", instruction: "Mesure ta fréquence cardiaque au repos. Clique sur TAP pour démarrer le chrono de 30s.", question: "Quel est le chiffre des centaines du BPM ? = E", validation: (val) => val >= 0 },
     { id: 6, title: "PC - Couleur des tables", discipline: "Physique-Chimie", tool: "spectrum", instruction: "Quelle est la longueur d'onde dominante des tables de la cour ?", question: "Chiffre associé = F", validation: (val) => val >= 0 },
-    { id: 7, title: "SVT - Érosion et Géologie", discipline: "SVT", tool: "input", instruction: "Trouve l'inclusion minérale. Sédimentaire(1), Magmatique(2), Métamorphique(3).", question: "Chiffre associé = G", validation: (val) => [1, 2, 3].includes(parseInt(val)) },
-    { id: 8, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins en le superposant.", question: "Numéro du tube témoin = H", validation: (val) => val > 0 },
-    { id: 9, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = I", validation: (val) => [1, 2].includes(parseInt(val)) },
-    { id: 10, title: "SVT - Agrosystème et Sol", discipline: "SVT", tool: "geo", instruction: "Mesure la température du sol à l'ombre.", question: "Chiffre des unités en <strong>°C</strong> = J", validation: (val) => val >= 0 },
-    { id: 11, title: "SVT - Espèce Invasive", discipline: "SVT", tool: "input", instruction: "Trouve l'Ailante près de la cafétéria. Ses racines sont agressives et elle produit des toxines.", question: "Entre combien de blocs de béton pousse-t-elle ? = K", validation: (val) => parseInt(val) === 2 },
-    { id: 12, title: "SVT - La Photosynthèse", discipline: "SVT", tool: "input", instruction: "Le pigment vert des végétaux est la chlorophylle. Il est situé dans des organites permettant la photosynthèse.", question: "Combien y a-t-il de lettres dans le nom de cet organite ? = L", validation: (val) => parseInt(val) === 12 }
+    { id: 7, title: "PC - Concentration en masse", discipline: "Physique-Chimie", tool: "concentration", instruction: "Compare le tube Inconnu X avec les témoins en le superposant.", question: "Numéro du tube témoin = G", validation: (val) => parseInt(val) === 4 },
+    { id: 8, title: "PC - Caractéristique d'un son", discipline: "Physique-Chimie", tool: "audio", instruction: "Utilise le diapason. Quel son est le plus aigu ?", question: "Le son le plus aigu correspond au Cas n° (1 ou 2) = H", validation: (val) => [1, 2].includes(parseInt(val)) },
+    { id: 9, title: "SVT - Espèce Invasive", discipline: "SVT", tool: "ailante", instruction: "Trouve l'Ailante (Faux-vernis du Japon) près de la cafétéria. Prends une photo et identifie les folioles.", question: "Elle pousse entre 2 blocs de béton ? (vrai / faux) = I", validation: (val) => val.toLowerCase() === "vrai" },
+    { id: 10, title: "SVT - La Photosynthèse", discipline: "SVT", tool: "photosynthesis", instruction: "Découvre les secrets de la photosynthèse.", question: "Combien y a-t-il de lettres dans le nom de cet organite ? = J", validation: (val) => parseInt(val) === 12 }
 ];
 
 // --- CORE UTILS ---
@@ -104,8 +102,8 @@ function loadState() {
 }
 
 function getPuzzleId(group, step) {
-    // Carousel formula: Énigme_Affichée = ((Numéro_Groupe - 1 + Étape_Actuelle) % 12) + 1
-    return ((group - 1 + step) % 12) + 1;
+    // Carousel formula: Énigme_Affichée = ((Numéro_Groupe - 1 + Étape_Actuelle) % 10) + 1
+    return ((group - 1 + step) % 10) + 1;
 }
 
 // --- VIEW RADI RENDERING ---
@@ -120,11 +118,11 @@ function render() {
     }
 
     if (!state.group) {
-        renderHome(container);
-    } else if (state.currentStep >= 12) {
-        renderFinal(container);
+        renderHome(app);
+    } else if (state.currentStep >= 10) {
+        renderFinal(app);
     } else {
-        renderPuzzle(container);
+        renderPuzzle(app);
     }
 }
 
@@ -180,7 +178,7 @@ function renderPuzzle(container) {
     const header = document.createElement('div');
     header.className = 'enigme-header';
     header.innerHTML = `
-        <div class="badge">Étape ${state.currentStep + 1} / 12</div>
+        <div class="badge">Étape ${state.currentStep + 1} / 10</div>
         <div class="chrono" id="global-chrono">00:00</div>
     `;
     view.appendChild(header);
@@ -336,14 +334,14 @@ function renderAdmin(container) {
                 <thead>
                     <tr>
                         <th style="width: 40px;">GRP</th>
-                        ${[1,2,3,4,5,6,7,8,9,10,11,12].map(i => `<th>E${i}</th>`).join('')}
+                        ${[1,2,3,4,5,6,7,8,9,10].map(i => `<th>E${i}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody id="admin-tbody">
                     ${[1,2,3,4,5,6,7,8,9].map(g => `
                         <tr>
                             <td style="background: rgba(30, 41, 59, 1); color: #fff; font-weight: 900; border-radius: 6px;">${g}</td>
-                            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
+                            ${[1,2,3,4,5,6,7,8,9,10].map(s => `<td class="status-0" id="cell-${g}-${s}">-</td>`).join('')}
                         </tr>
                     `).join('')}
                 </tbody>
@@ -376,7 +374,7 @@ function renderAdmin(container) {
 
     // Populate the table cells
     for(let g=1; g<=9; g++) {
-        for(let pId=1; pId<=12; pId++) {
+        for(let pId=1; pId<=10; pId++) {
             const cell = view.querySelector(`#cell-${g}-${pId}`);
             if (!cell) continue;
 
@@ -430,13 +428,13 @@ function loadTool(type, container, puzzleId) {
         case 'camera':
             container.innerHTML = `
                 <div id="camera-box" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <video id="video-stream" style="width: 100%; border-radius: 8px; display: none;" autoplay playsinline></video>
-                    <canvas id="canvas-photo" style="width: 100%; border-radius: 8px; background: #eee; min-height: 200px; display: block;"></canvas>
+                    <video id="video-stream" style="width: 100%; border-radius: 12px; display: none;" autoplay playsinline></video>
+                    <canvas id="canvas-photo" style="width: 100%; border-radius: 12px; background: #0f172a; min-height: 200px; display: block; border: 1px solid rgba(255,255,255,0.1);"></canvas>
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                        <button id="open-cam" class="secondary" style="font-size: 0.9rem;">📸 Capture</button>
-                        <button id="clear-draw" class="secondary" style="font-size: 0.9rem; background: #f8fafc; color: #4a5568;">EFFACER</button>
+                        <button id="open-cam" class="secondary" style="font-size: 0.85rem; padding: 0.75rem 1rem;">📸 Capture / Photo</button>
+                        <button id="clear-draw" class="secondary" style="font-size: 0.85rem; background: rgba(255,255,255,0.05); color: #fff; padding: 0.75rem 1rem;">EFFACER</button>
                     </div>
-                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">Dessine tes annotations au doigt !</p>
+                    <p style="font-size: 0.75rem; margin-top: 0.75rem; color: var(--text-muted);">Dessine tes annotations au doigt sur la photo !</p>
                 </div>
             `;
             const video = container.querySelector('#video-stream');
@@ -456,7 +454,6 @@ function loadTool(type, container, puzzleId) {
                         video.srcObject = stream;
                         btn.innerText = "Saisir l'image";
                     } catch (e) {
-                        // Fallback if environment camera is not available
                         try {
                             stream = await navigator.mediaDevices.getUserMedia({ video: true });
                             video.style.display = 'block';
@@ -464,7 +461,7 @@ function loadTool(type, container, puzzleId) {
                             video.srcObject = stream;
                             btn.innerText = "Saisir l'image";
                         } catch (e2) {
-                            alert("Erreur accès caméra. Vérifie les permissions !");
+                            alert("Erreur accès caméra.");
                         }
                     }
                 } else {
@@ -473,13 +470,12 @@ function loadTool(type, container, puzzleId) {
                     ctx.drawImage(video, 0, 0);
                     video.style.display = 'none';
                     canvas.style.display = 'block';
-                    btn.innerText = "📸 Capture";
+                    btn.innerText = "📸 Capture / Photo";
                     if(stream) stream.getTracks().forEach(t => t.stop());
                     stream = null;
                 }
             });
 
-            // Drawing logic
             let isDrawing = false;
             const startDraw = (e) => { isDrawing = true; draw(e); };
             const stopDraw = () => { isDrawing = false; ctx.beginPath(); };
@@ -490,9 +486,9 @@ function loadTool(type, container, puzzleId) {
                 const scaleY = canvas.height / rect.height;
                 const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
                 const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-                ctx.lineWidth = 5;
+                ctx.lineWidth = 6;
                 ctx.lineCap = 'round';
-                ctx.strokeStyle = '#e67e22';
+                ctx.strokeStyle = '#f97316';
                 ctx.lineTo(x * scaleX, y * scaleY);
                 ctx.stroke();
                 ctx.beginPath();
@@ -507,6 +503,56 @@ function loadTool(type, container, puzzleId) {
             container.querySelector('#clear-draw').addEventListener('click', () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             });
+            break;
+
+        case 'compass':
+            container.innerHTML = `
+                <div style="width: 100%; text-align: center; position: relative; padding-bottom: 2rem;">
+                    <div id="compass-body" style="width: 160px; height: 160px; border-radius: 50%; border: 8px solid #1e293b; margin: 0 auto; position: relative; background: radial-gradient(circle, #334155 0%, #0f172a 100%); box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);">
+                        <div id="needle" style="position: absolute; top: 50%; left: 50%; width: 6px; height: 100px; margin-top: -500px; margin-left: -3px; transition: transform 0.1s; transform-origin: center 50px; z-index: 2;">
+                            <div style="width: 100%; height: 50px; background: #ef4444; border-radius: 3px 3px 0 0;"></div>
+                            <div style="width: 100%; height: 50px; background: #e2e8f0; border-radius: 0 0 3px 3px;"></div>
+                        </div>
+                        <div id="needle" style="position: absolute; top: 50%; left: 50%; width: 6px; height: 100px; margin-top: -50px; margin-left: -3px; transition: transform 0.1s; transform-origin: center center; z-index: 2;">
+                            <div style="width: 100%; height: 50%; background: #ef4444; border-radius: 3px 3px 0 0;"></div>
+                            <div style="width: 100%; height: 50%; background: #e2e8f0; border-radius: 0 0 3px 3px;"></div>
+                        </div>
+                        <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-weight: 900; color: #fff; font-size: 0.8rem;">N</div>
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-weight: 900; color: #fff; font-size: 0.8rem;">S</div>
+                        <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-weight: 900; color: #fff; font-size: 0.8rem;">O</div>
+                        <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-weight: 900; color: #fff; font-size: 0.8rem;">E</div>
+                    </div>
+                    <p id="compass-val" style="margin-top: 1.5rem; font-size: 1.2rem; font-weight: 900; color: var(--accent-secondary);">Orientation : --°</p>
+                    <button id="btn-compass-init" class="secondary" style="font-size: 0.8rem; margin-top: 1rem; width: auto; padding: 0.75rem 1rem;">ACTIVER LA BOUSSOLE</button>
+                </div>
+            `;
+            const needle = container.querySelector('#needle');
+            const compVal = container.querySelector('#compass-val');
+            const btnComp = container.querySelector('#btn-compass-init');
+
+            btnComp.onclick = async () => {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    try {
+                        const permission = await DeviceOrientationEvent.requestPermission();
+                        if (permission === 'granted') {
+                             window.addEventListener('deviceorientation', handleOrientation, true);
+                             btnComp.style.display = 'none';
+                        }
+                    } catch (e) { alert("Permission boussole refusée."); }
+                } else {
+                    window.addEventListener('deviceorientation', handleOrientation, true);
+                    window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+                    btnComp.style.display = 'none';
+                }
+            };
+
+            function handleOrientation(e) {
+                let heading = e.webkitCompassHeading || (360 - e.alpha);
+                if (heading !== undefined && heading !== null) {
+                    needle.style.transform = `rotate(${-heading}deg)`;
+                    compVal.innerText = `Orientation : ${Math.round(heading)}°`;
+                }
+            }
             break;
 
         case 'density':
@@ -792,7 +838,7 @@ function loadTool(type, container, puzzleId) {
                     <div id="drag-zone" style="width: 100%; height: 140px; position: relative; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;">
                          <p style="font-size: 0.85rem; color: var(--accent-secondary); margin-bottom: 1rem; font-weight: 600;">Glisse le TUBE X sur l'échelle pour comparer :</p>
                          <div id="tube-x" style="width: 32px; height: 100px; border: 3px solid var(--accent-primary); border-radius: 0 0 15px 15px; background: rgba(15, 23, 42, 0.95); position: absolute; left: 20px; top: 40px; cursor: grab; transition: none; z-index: 100; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);">
-                            <div style="position: absolute; bottom: 0; width: 100%; height: 65%; background: rgba(59, 130, 246, 0.6); border-radius: 0 0 12px 12px;"></div>
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 65%; background: rgba(59, 130, 246, 0.5); border-radius: 0 0 12px 12px;"></div>
                             <span style="position: absolute; top: -25px; width: 100%; text-align: center; color: var(--accent-primary); font-weight: 900; font-size: 1rem;">X</span>
                          </div>
                     </div>
@@ -822,10 +868,6 @@ function loadTool(type, container, puzzleId) {
                 const clientY = e.clientY || e.touches[0].clientY;
                 currentPosX = clientX - startDragX;
                 currentPosY = clientY - startDragY;
-                
-                // Boundaries
-                const rect = dz.getBoundingClientRect();
-                // Allow vertical movement up to the scale
                 tx.style.left = currentPosX + "px";
                 tx.style.top = currentPosY + "px";
             };
@@ -844,43 +886,106 @@ function loadTool(type, container, puzzleId) {
             window.addEventListener('touchend', onDragEnd);
             break;
 
-        case 'geo':
+        case 'ailante':
             container.innerHTML = `
-                <div style="width: 100%; text-align: center;">
-                    <div id="radar" style="width: 80px; height: 80px; border-radius: 50%; background: rgba(41, 128, 185, 0.1); border: 2px solid var(--accent-secondary); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; position: relative;">
-                        <div id="radar-pulse" style="width: 100%; height: 100%; background: var(--accent-secondary); border-radius: 50%; opacity: 0.2; animation: pulse 2s infinite;"></div>
-                        <span style="position: absolute; font-size: 1.5rem;">📍</span>
-                    </div>
-                    <p id="dist-val" style="font-size: 1.5rem; font-weight: 900; color: var(--accent-secondary);">Recherche GPS...</p>
-                    <p style="font-size: 0.8rem; color: #64748b;">Distance entre toi et le lieu d'arrivée</p>
+                <div id="ailante-step-1">
+                     <p style="font-size: 0.85rem; margin-bottom: 1rem; color: var(--text-muted);">Prends en photo l'Ailante et entoure les folioles sur ton écran.</p>
+                     <video id="v-ailante" style="width: 100%; border-radius: 12px; display: none;" autoplay playsinline></video>
+                     <canvas id="c-ailante" style="width: 100%; border-radius: 12px; background: #111; min-height: 200px; display: block; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button id="cam-ailante" class="secondary" style="font-size: 0.8rem;">📸 CAPTURE</button>
+                        <button id="next-ailante" class="secondary" style="font-size: 0.8rem; display: none; background: var(--accent-secondary); color: white;">ÉTAPE SUIVANTE</button>
+                     </div>
                 </div>
-                <style>
-                @keyframes pulse {
-                    0% { transform: scale(0.5); opacity: 0.8; }
-                    100% { transform: scale(1.5); opacity: 0; }
-                }
-                </style>
+                <div id="ailante-step-2" style="display: none;">
+                    <div class="card" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent-secondary); margin-bottom: 1rem;">
+                        <p style="font-size: 0.9rem;"><strong>VRAI OU FAUX ?</strong></p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Ses feuilles sont constituées de plus de 10 folioles.</p>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button id="vf-vrai" class="secondary" style="font-size: 0.8rem;">VRAI</button>
+                            <button id="vf-faux" class="secondary" style="font-size: 0.8rem;">FAUX</button>
+                        </div>
+                    </div>
+                    <div id="ailante-final" style="display: none;">
+                         <p style="font-size: 0.85rem; color: var(--accent-primary); font-weight: 700;">Correct ! Reste une dernière question...</p>
+                         <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">Réponds à la question en bas de la page.</p>
+                    </div>
+                </div>
             `;
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition((pos) => {
-                    // Simulating a target point (e.g., middle of a courtyard)
-                    // In real use, these would be the coordinates of the goal
-                    const targetLat = pos.coords.latitude + 0.0001; 
-                    const targetLng = pos.coords.longitude + 0.0001;
-                    
-                    const R = 6371e3; // metres
-                    const phi1 = pos.coords.latitude * Math.PI/180;
-                    const phi2 = targetLat * Math.PI/180;
-                    const deltaPhi = (targetLat-pos.coords.latitude) * Math.PI/180;
-                    const deltaLambda = (targetLng-pos.coords.longitude) * Math.PI/180;
-                    const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
-                             Math.cos(phi1) * Math.cos(phi2) *
-                             Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
-                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    const d = R * c;
-                    container.querySelector('#dist-val').innerText = `${Math.round(d)} m`;
-                }, () => { alert("Active le GPS !"); });
-            }
+            const vAi = container.querySelector('#v-ailante');
+            const cAi = container.querySelector('#c-ailante');
+            const ctxAi = cAi.getContext('2d');
+            const btnAiCam = container.querySelector('#cam-ailante');
+            const btnAiNext = container.querySelector('#next-ailante');
+            const stepAi1 = container.querySelector('#ailante-step-1');
+            const stepAi2 = container.querySelector('#ailante-step-2');
+            let aiStream = null;
+
+            btnAiCam.onclick = async () => {
+                if (!aiStream) {
+                    try {
+                        aiStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                        vAi.style.display = 'block'; cAi.style.display = 'none';
+                        vAi.srcObject = aiStream;
+                        btnAiCam.innerText = "SAISIR";
+                    } catch(e) { alert("Caméra non accessible"); }
+                } else {
+                    cAi.width = vAi.videoWidth; cAi.height = vAi.videoHeight;
+                    ctxAi.drawImage(vAi, 0, 0);
+                    vAi.style.display = 'none'; cAi.style.display = 'block';
+                    btnAiCam.innerText = "📸 REPRENDRE";
+                    btnAiNext.style.display = 'block';
+                    if(aiStream) aiStream.getTracks().forEach(t => t.stop());
+                    aiStream = null;
+                }
+            };
+
+            btnAiNext.onclick = () => { stepAi1.style.display = 'none'; stepAi2.style.display = 'block'; };
+
+            container.querySelector('#vf-vrai').onclick = () => {
+                AudioEngine.play('success');
+                container.querySelector('#ailante-final').style.display = 'block';
+            };
+            container.querySelector('#vf-faux').onclick = () => {
+                AudioEngine.play('error');
+                alert("Erreur ! Regarde bien les folioles.");
+            };
+            break;
+
+        case 'photosynthesis':
+            container.innerHTML = `
+                <div id="photo-step-1">
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted);">Comment appelle-t-on le pigment vert des végétaux ?</p>
+                    <div class="input-group">
+                        <input type="text" id="pigment-in" placeholder="Réponse...">
+                    </div>
+                    <button id="pigment-check" class="secondary">VALIDER ÉTAPE 1</button>
+                </div>
+                <div id="photo-step-2" style="display: none;">
+                    <div class="card" style="background: rgba(16, 185, 129, 0.1); border-color: var(--success); margin-bottom: 1rem;">
+                        <p style="font-size: 0.9rem; color: var(--success);">Bravo ! C'est bien la <strong>chlorophylle</strong>.</p>
+                    </div>
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted);">Ce pigment est situé dans des organites permettant la photosynthèse. Quel est le nom de cet organite ?</p>
+                    <div class="input-group">
+                        <input type="text" id="organite-in" placeholder="Nom de l'organite...">
+                    </div>
+                    <p style="font-size: 0.8rem; margin-top: 1rem; color: var(--accent-primary); font-weight: 700;">Calcule le nombre de lettres de ce mot et saisis-le dans la case "Réponse" en bas !</p>
+                </div>
+            `;
+            const pIn = container.querySelector('#pigment-in');
+            const step1 = container.querySelector('#photo-step-1');
+            const step2 = container.querySelector('#photo-step-2');
+            
+            container.querySelector('#pigment-check').onclick = () => {
+                if (pIn.value.toLowerCase().includes('chlorophylle')) {
+                    step1.style.display = 'none';
+                    step2.style.display = 'block';
+                    AudioEngine.play('success');
+                } else {
+                    AudioEngine.play('error');
+                    alert("Ce n'est pas le bon pigment !");
+                }
+            };
             break;
 
         default:
