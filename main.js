@@ -281,16 +281,24 @@ function renderPuzzle(container) {
             state.notes[puzzleId] = notesInput.value;
             state.currentStep++;
             
-            // Capture de la photo de l'ailante avec les annotations
+            // Calcul du temps total si c'est la fin (10ème étape)
             let imgData = null;
             const canvasAi = document.querySelector('#c-ailante');
             if (canvasAi) {
                 imgData = canvasAi.toDataURL('image/jpeg', 0.6); // Compression JPEG 60%
             }
             
+            let totalTime = null;
+            if (state.currentStep === 10) {
+                const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                totalTime = `${mins}m ${secs}s`;
+            }
+            
             clearInterval(chronoInterval);
             saveState();
-            syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData);
+            syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData, totalTime);
             render();
         });
     } else {
@@ -324,9 +332,9 @@ function renderPuzzle(container) {
                 clearInterval(chronoInterval);
                 saveState();
                 
-                // Calcul du temps total si c'est la fin (E10)
+                // Calcul du temps total si c'est la fin (10ème étape)
                 let totalTime = null;
-                if (puzzle.id === 10) {
+                if (state.currentStep === 10) {
                     const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
                     const mins = Math.floor(elapsed / 60);
                     const secs = elapsed % 60;
