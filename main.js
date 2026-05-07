@@ -261,6 +261,7 @@ function renderPuzzle(container) {
         btnFaux.addEventListener('click', () => {
             AudioEngine.play('error');
             alert("Erreur ! Regarde bien l'endroit où elle pousse.");
+            syncWithBackend(state.group, puzzleId, "Faux", notesInput.value, false);
         });
 
         btnVrai.addEventListener('click', () => {
@@ -310,6 +311,7 @@ function renderPuzzle(container) {
                 AudioEngine.play('error');
                 triggerHaptic('error');
                 alert("Réponse non valide. Vérifie tes mesures !");
+                syncWithBackend(state.group, puzzleId, val, notesInput.value, false);
             }
         });
     }
@@ -328,12 +330,12 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzMPA_4JEnhXIAy0_iIj6Hj
 /**
  * Fonction de synchronisation avec le script Google Apps (GAS)
  */
-function syncWithBackend(group, puzzleId, value, notes) {
-    console.log(`Syncing Group ${group}, Puzzle ${puzzleId}: ${value}`);
+function syncWithBackend(group, puzzleId, value, notes, isSuccess = true) {
+    console.log(`Syncing Group ${group}, Puzzle ${puzzleId}: ${value} (Success: ${isSuccess})`);
     
     // Sauvegarde locale de secours
     const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
-    const payload = { date: new Date(), group: "Groupe " + group, enigme: "E" + puzzleId, valeur: value, notes: notes };
+    const payload = { date: new Date(), group: "Groupe " + group, enigme: "E" + puzzleId, valeur: value, notes: notes, isSuccess: isSuccess };
     logs.push(payload);
     localStorage.setItem('gas_mock_logs', JSON.stringify(logs));
 
