@@ -280,9 +280,17 @@ function renderPuzzle(container) {
             state.responses[puzzleId] = "vrai";
             state.notes[puzzleId] = notesInput.value;
             state.currentStep++;
+            
+            // Capture de la photo de l'ailante avec les annotations
+            let imgData = null;
+            const canvasAi = document.querySelector('#c-ailante');
+            if (canvasAi) {
+                imgData = canvasAi.toDataURL('image/jpeg', 0.6); // Compression JPEG 60%
+            }
+            
             clearInterval(chronoInterval);
             saveState();
-            syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId]);
+            syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData);
             render();
         });
     } else {
@@ -303,9 +311,19 @@ function renderPuzzle(container) {
                 state.responses[puzzleId] = val || (state.isDemoMode ? "DEMO" : "");
                 state.notes[puzzleId] = notesInput.value;
                 state.currentStep++;
+                
+                // Capture de la photo du palmier si c'est l'énigme 2
+                let imgData = null;
+                if (puzzle.id === 2) {
+                    const canvasPalm = document.querySelector('#canvas-photo');
+                    if (canvasPalm) {
+                        imgData = canvasPalm.toDataURL('image/jpeg', 0.6);
+                    }
+                }
+
                 clearInterval(chronoInterval);
                 saveState();
-                syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId]);
+                syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData);
                 render();
             } else {
                 AudioEngine.play('error');
@@ -330,12 +348,20 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzMPA_4JEnhXIAy0_iIj6Hj
 /**
  * Fonction de synchronisation avec le script Google Apps (GAS)
  */
-function syncWithBackend(group, puzzleId, value, notes, isSuccess = true) {
+function syncWithBackend(group, puzzleId, value, notes, isSuccess = true, imageData = null) {
     console.log(`Syncing Group ${group}, Puzzle ${puzzleId}: ${value} (Success: ${isSuccess})`);
     
     // Sauvegarde locale de secours
     const logs = JSON.parse(localStorage.getItem('gas_mock_logs') || '[]');
-    const payload = { date: new Date(), group: "Groupe " + group, enigme: "E" + puzzleId, valeur: value, notes: notes, isSuccess: isSuccess };
+    const payload = { 
+        date: new Date(), 
+        group: "Groupe " + group, 
+        enigme: "E" + puzzleId, 
+        valeur: value, 
+        notes: notes, 
+        isSuccess: isSuccess,
+        imageData: imageData // Ajout de l'image base64
+    };
     logs.push(payload);
     localStorage.setItem('gas_mock_logs', JSON.stringify(logs));
 
