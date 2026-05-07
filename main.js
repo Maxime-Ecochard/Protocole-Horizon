@@ -323,7 +323,17 @@ function renderPuzzle(container) {
 
                 clearInterval(chronoInterval);
                 saveState();
-                syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData);
+                
+                // Calcul du temps total si c'est la fin (E10)
+                let totalTime = null;
+                if (puzzle.id === 10) {
+                    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    totalTime = `${mins}m ${secs}s`;
+                }
+
+                syncWithBackend(state.group, puzzleId, state.responses[puzzleId], state.notes[puzzleId], true, imgData, totalTime);
                 render();
             } else {
                 AudioEngine.play('error');
@@ -348,7 +358,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzMPA_4JEnhXIAy0_iIj6Hj
 /**
  * Fonction de synchronisation avec le script Google Apps (GAS)
  */
-function syncWithBackend(group, puzzleId, value, notes, isSuccess = true, imageData = null) {
+function syncWithBackend(group, puzzleId, value, notes, isSuccess = true, imageData = null, totalTime = null) {
     console.log(`Syncing Group ${group}, Puzzle ${puzzleId}: ${value} (Success: ${isSuccess})`);
     
     // Sauvegarde locale de secours
@@ -360,7 +370,8 @@ function syncWithBackend(group, puzzleId, value, notes, isSuccess = true, imageD
         valeur: value, 
         notes: notes, 
         isSuccess: isSuccess,
-        imageData: imageData // Ajout de l'image base64
+        imageData: imageData,
+        totalTime: totalTime // Temps total envoyé à la fin
     };
     logs.push(payload);
     localStorage.setItem('gas_mock_logs', JSON.stringify(logs));
